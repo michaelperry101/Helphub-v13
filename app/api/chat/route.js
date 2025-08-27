@@ -1,52 +1,73 @@
 // app/api/chat/route.js
 import { NextResponse } from "next/server";
 
-export const runtime = "edge"; // faster & no cold Node deps
+// Use Node/serverless by default (works on Vercel & Netlify)
+export const dynamic = "force-dynamic";
+
+const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 export async function GET() {
-  // simple health check so you can hit /api/chat in the browser
-  return NextResponse.json({ ok: true });
+  // quick health check + confirm server has the key
+  return NextResponse.json({
+    ok: true,
+    hasKey: Boolean(process.env.OPENAI_API_KEY),
+    model: MODEL,
+  });
 }
 
 export async function POST(req) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const messages = Array.isArray(body?.messages) ? body.messages : [];
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: "Missing OPENAI_API_KEY on the server." },
+        { error: "OPENAI_API_KEY is missing on the server." },
         { status: 500 }
       );
     }
 
-    // Call OpenAI Chat Completions (no extra libs needed)
+    const body = await req.json().catch(() => ({}));
+    const messages = Array.isArray(body?.messages) ? body.messages : [];
+    const payload = {
+      model: MODEL,
+      messages: messages.length ? messages : [{ role: "user", content: "Say hello as Carys." }],
+      temperature: 0.7,
+    };
+
     const resp = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: "gpt-4o-mini", // reliable, fast, cost-effective
-        messages: messages.length
-          ? messages
-          : [{ role: "user", content: "Say hello as Carys." }],
-        temperature: 0.7,
-      }),
+      body: JSON.stringify(payload),
     });
 
+    const text = await resp.text(); // read raw for better error surfacing
     if (!resp.ok) {
-      const text = await resp.text();
+      // surface OpenAI error body to client so you know exactly what's wrong
       return NextResponse.json(
-        { error: `OpenAI error: ${resp.status} ${text}` },
-        { status: 500 }
+        { error: `OpenAI ${resp.status}: ${text}` },
+        { status: 502 }
       );
     }
 
-    const data = await resp.json();
-    const reply =
-      data?.choices?.[0]?.message?.content?.trim() ||
-      "I couldn't generate a response.";
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON from OpenAI.", body: text.slice(0, 500) },
+        { status: 502 }
+      );
+    }
+
+    const reply = data?.choices?.[0]?.message?.content?.trim();
+    if (!reply) {
+      return NextResponse.json(
+        { error: "No content in OpenAI response.", body: data },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({ reply });
   } catch (err) {
     return NextResponse.json(
