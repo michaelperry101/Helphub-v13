@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "HelpHub247",
+    "slug": "helphub247",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "../public/icons/icon-192.png",
+    "userInterfaceStyle": "automatic",
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "dummy-helphub247"
+      }
+    }
+  }
+}
