@@ -1,13 +1,14 @@
 // app/api/chat/route.js
 import { NextResponse } from "next/server";
 
-// Use Node/serverless by default (works on Vercel & Netlify)
+// Use Node runtime (works on Vercel & Netlify)
 export const dynamic = "force-dynamic";
 
+// Set your default model (can override via env OPENAI_MODEL)
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 export async function GET() {
-  // quick health check + confirm server has the key
+  // health check: open /api/chat in the browser
   return NextResponse.json({
     ok: true,
     hasKey: Boolean(process.env.OPENAI_API_KEY),
@@ -26,13 +27,16 @@ export async function POST(req) {
 
     const body = await req.json().catch(() => ({}));
     const messages = Array.isArray(body?.messages) ? body.messages : [];
+
     const payload = {
       model: MODEL,
-      messages: messages.length ? messages : [{ role: "user", content: "Say hello as Carys." }],
+      messages: messages.length
+        ? messages
+        : [{ role: "user", content: "Say hello as Carys." }],
       temperature: 0.7,
     };
 
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+    const apiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,21 +45,20 @@ export async function POST(req) {
       body: JSON.stringify(payload),
     });
 
-    const text = await resp.text(); // read raw for better error surfacing
-    if (!resp.ok) {
-      // surface OpenAI error body to client so you know exactly what's wrong
+    const raw = await apiRes.text(); // always read raw so we can surface errors
+    if (!apiRes.ok) {
       return NextResponse.json(
-        { error: `OpenAI ${resp.status}: ${text}` },
+        { error: `OpenAI ${apiRes.status}: ${raw}` },
         { status: 502 }
       );
     }
 
     let data;
     try {
-      data = JSON.parse(text);
+      data = JSON.parse(raw);
     } catch {
       return NextResponse.json(
-        { error: "Invalid JSON from OpenAI.", body: text.slice(0, 500) },
+        { error: "Invalid JSON from OpenAI.", body: raw.slice(0, 400) },
         { status: 502 }
       );
     }
