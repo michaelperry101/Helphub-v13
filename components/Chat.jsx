@@ -1,99 +1,75 @@
-// components/Chat.jsx
 "use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export default function Chat() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hi, I’m Carys. How can I help today?" },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [sending, setSending] = useState(false);
-  const listRef = useRef(null);
 
-  useEffect(() => {
-    // auto-scroll to bottom on new messages
-    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  async function sendMessage() {
+    if (!input.trim()) return;
 
-  async function sendMessage(e) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || sending) return;
-
-    const next = [...messages, { role: "user", content: text }];
-    setMessages(next);
+    setMessages((m) => [...m, { role: "user", content: input }]);
+    const userInput = input;
     setInput("");
-    setSending(true);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({
+          messages: [...messages, { role: "user", content: userInput }],
+        }),
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         const err = data?.error || "Request failed";
-        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err}` }]);
+        setMessages((m) => [
+          ...m,
+          { role: "assistant", content: `⚠️ ${err}` },
+        ]);
       } else {
         const reply = data?.reply || "…";
-        setMessages((m) => [...m, { role: "assistant", content: reply }]);
+        setMessages((m) => [
+          ...m,
+          { role: "assistant", content: reply },
+        ]);
 
-        // Optional: speak with a British voice if available
-        try {
-          const saved = JSON.parse(localStorage.getItem("hh_voice") || "true");
-          if (saved && typeof window !== "undefined" && "speechSynthesis" in window) {
-            const u = new SpeechSynthesisUtterance(reply);
-            // pick an en-GB voice if available
-            const voices = window.speechSynthesis.getVoices();
-            const uk = voices.find((v) => /en-GB/i.test(v.lang));
-            if (uk) u.voice = uk;
-            window.speechSynthesis.speak(u);
-          }
-        } catch {}
+        // 🔊 Optional speech synthesis
+        if (typeof window !== "undefined" && window.speechSynthesis) {
+          const utter = new SpeechSynthesisUtterance(reply);
+          window.speechSynthesis.speak(utter);
+        }
       }
     } catch (err) {
+      console.error(err);
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: `⚠️ Network error: ${err?.message || err}` },
+        { role: "assistant", content: "Error: " + err.message },
       ]);
-    } finally {
-      setSending(false);
     }
   }
 
   return (
-    <div className="chat-wrap">
-      <ul className="chat-list" ref={listRef}>
-        {messages.map((m, i) => (
-          <li key={i} className={`msg ${m.role}`}>
-            <div className="bubble">{m.content}</div>
-          </li>
+    <div className="chat-container">
+      <div className="messages">
+        {messages.map((msg, i) => (
+          <div key={i} className={`message ${msg.role}`}>
+            {msg.content}
+          </div>
         ))}
-      </ul>
-
-      <form className="chat-inputbar" onSubmit={sendMessage}>
-        <label className="icon-btn" title="Attach file">
-          <input type="file" hidden />
-          📎
-        </label>
-        <label className="icon-btn" title="Upload image">
-          <input type="file" accept="image/*" hidden />
-          🖼️
-        </label>
+      </div>
+      <div className="chat-input">
         <input
-          className="chat-input"
-          placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
+          type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          disabled={sending}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type your message..."
         />
-        <button className="send-btn" disabled={sending || !input.trim()}>
-          {sending ? "…" : "Send"}
-        </button>
-      </form>
+        <button onClick={sendMessage}>Send</button>
+      </div>
     </div>
   );
 }
