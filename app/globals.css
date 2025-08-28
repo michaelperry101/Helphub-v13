@@ -169,3 +169,77 @@ html[data-theme="dark"]{
   border-color: #2a2f36;
   box-shadow: 0 10px 30px rgba(0,0,0,.45);
 }
+/* ==========================================================================
+   Mute control – premium styles
+   ========================================================================== */
+
+/* Icon-only floating action button (FAB) */
+.mute-fab{
+  position: fixed;
+  top: 78px;               /* adjust if header height differs */
+  right: 16px;
+  z-index: 1400;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  color: #0f172a;
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: 0 10px 30px rgba(2,6,23,.12);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+}
+.mute-fab:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 38px rgba(2,6,23,.16);
+  background: rgba(255,255,255,0.95);
+}
+.mute-fab:active{ transform: translateY(0); }
+.mute-fab-icon{ font-size: 18px; line-height: 1; }
+
+/* Muted state tint */
+.mute-fab.is-muted{
+  background: rgba(255, 241, 242, 0.92);           /* subtle red glass */
+  border-color: rgba(244, 63, 94, 0.25);
+  color: #be123c;
+}
+
+/* dark mode */
+[data-theme="dark"] .mute-fab{
+  background: rgba(17,20,24,0.7);
+  border-color: rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  box-shadow: 0 12px 40px rgba(0,0,0,.45);
+}
+[data-theme="dark"] .mute-fab:hover{
+  background: rgba(24,28,33,0.85);
+}
+
+/* Optional pill w/ text (alternate style) */
+.mute-toggle{
+  position: fixed;
+  top: 78px;
+  right: 16px;
+  z-index: 1400;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #1f2937;
+  border: 1px solid #e6e9ef;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  cursor: pointer;
+  transition: transform .1s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+}
+.mute-toggle:hover{ transform: translateY(-1px); box-shadow: 0 12px 36px rgba(0,0,0,.10); }
+.mute-toggle .mute-icon{ font-size: 18px; line-height: 0; }
+.mute-toggle .mute-text{ font-weight: 600; font-size: 13px; }
+.mute-toggle.is-muted{ background:#fff1f2; color:#be123c; border-color:#fecdd3; }
+[data-theme="dark"] .mute-toggle{ background:#111418; color:#e5e7eb; border-color:#2a2f36; box-shadow:0 10px 30px rgba(0,0,0,.45); }
+[data-theme="dark"] .mute-toggle.is-muted{ background:#2a1117; border-color:#7f1d1d; color:#fecaca; }
