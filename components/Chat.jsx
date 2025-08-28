@@ -6,7 +6,7 @@ export default function Chat() {
     { role: "assistant", content: "Hi, I’m Carys. How can I help today?" },
   ]);
   const [input, setInput] = useState("");
-  const [sending, setSending] = useState(false);
+    const [sending, setSending] = useState(false);
   const [muted, setMuted] = useState(false);
   const listRef = useRef(null);
 
@@ -29,7 +29,7 @@ export default function Chat() {
     try {
       localStorage.setItem("hh_mute", next ? "1" : "0");
       if (next && typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel(); // stop any ongoing speech immediately
+        window.speechSynthesis.cancel();
       }
     } catch {}
   }
@@ -50,7 +50,6 @@ export default function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
-
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -60,7 +59,7 @@ export default function Chat() {
         const reply = data?.reply || "…";
         setMessages((m) => [...m, { role: "assistant", content: reply }]);
 
-        // Speak in British English if available, only when not muted
+        // Speak (British) only when not muted
         try {
           if (!muted && typeof window !== "undefined" && "speechSynthesis" in window) {
             const u = new SpeechSynthesisUtterance(reply);
@@ -85,15 +84,30 @@ export default function Chat() {
 
   return (
     <div className="chat-wrap">
-      {/* Mute toggle (icon-only) */}
+      {/* FORCE-VISIBLE mute button (inline styles) */}
       <button
         type="button"
-        className={`mute-fab ${muted ? "is-muted" : ""}`}
+        onClick={toggleMute}
         aria-label={muted ? "Unmute Carys" : "Mute Carys"}
         title={muted ? "Unmute Carys" : "Mute Carys"}
-        onClick={toggleMute}
+        className="mute-fab"
+        style={{
+          position: "fixed",
+          top: "78px",       // tweak if header is taller/shorter
+          right: "16px",
+          zIndex: 2000,
+          width: "44px",
+          height: "44px",
+          borderRadius: "50%",
+          display: "grid",
+          placeItems: "center",
+          background: "rgba(255,255,255,0.92)",
+          border: "1px solid rgba(15,23,42,0.08)",
+          boxShadow: "0 10px 30px rgba(2,6,23,.12)",
+          cursor: "pointer"
+        }}
       >
-        <span className="mute-fab-icon" aria-hidden="true">
+        <span style={{ fontSize: 18 }} aria-hidden="true">
           {muted ? "🔇" : "🔊"}
         </span>
       </button>
@@ -117,7 +131,6 @@ export default function Chat() {
           <input type="file" hidden />
           📎
         </label>
-
         <input
           className="chat-input"
           placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
@@ -127,7 +140,6 @@ export default function Chat() {
           disabled={sending}
           aria-label="Message input"
         />
-
         <button className="send-btn" disabled={sending || !input.trim()}>
           {sending ? "…" : "➤"}
         </button>
