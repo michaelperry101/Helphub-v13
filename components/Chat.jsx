@@ -1,3 +1,4 @@
+console.log("✅ Chat component is rendering");
 "use client";
 import { useEffect, useRef, useState } from "react";
 
