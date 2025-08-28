@@ -8,13 +8,10 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
 
-  // --- MUTE STATE (persists) ---
+  // --- Mute (persists) ---
   const [muted, setMuted] = useState(false);
   useEffect(() => {
-    try {
-      const m = localStorage.getItem("hh_mute") === "1";
-      setMuted(m);
-    } catch {}
+    try { setMuted(localStorage.getItem("hh_mute") === "1"); } catch {}
   }, []);
   function toggleMute() {
     const next = !muted;
@@ -22,18 +19,18 @@ export default function Chat() {
     try {
       localStorage.setItem("hh_mute", next ? "1" : "0");
       if (next && typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel(); // stop any current speech immediately
+        window.speechSynthesis.cancel();
       }
     } catch {}
   }
 
-  // --- AUTOSCROLL ---
+  // --- Autoscroll ---
   const listRef = useRef(null);
   useEffect(() => {
     listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // --- SEND ---
+  // --- Send ---
   async function sendMessage(e) {
     e?.preventDefault?.();
     const text = input.trim();
@@ -50,7 +47,6 @@ export default function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
-
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -60,7 +56,7 @@ export default function Chat() {
         const reply = data?.reply || "…";
         setMessages((m) => [...m, { role: "assistant", content: reply }]);
 
-        // Speak (British) only when not muted
+        // Speak (British) only if not muted
         try {
           if (!muted && typeof window !== "undefined" && "speechSynthesis" in window) {
             const u = new SpeechSynthesisUtterance(reply);
@@ -85,36 +81,6 @@ export default function Chat() {
 
   return (
     <div className="chat-wrap" style={{ position: "relative", minHeight: "100vh" }}>
-      {/* FORCE-VISIBLE MUTE BUTTON (inline styles so it shows even without CSS) */}
-      <button
-        type="button"
-        onClick={toggleMute}
-        aria-label={muted ? "Unmute Carys" : "Mute Carys"}
-        title={muted ? "Unmute Carys" : "Mute Carys"}
-        style={{
-          position: "fixed",
-          top: "78px",        // tweak if your header height differs
-          right: "16px",
-          zIndex: 2000,
-          width: "44px",
-          height: "44px",
-          borderRadius: "50%",
-          display: "grid",
-          placeItems: "center",
-          background: muted ? "rgba(255,241,242,0.95)" : "rgba(255,255,255,0.92)",
-          color: muted ? "#be123c" : "#0f172a",
-          border: muted
-            ? "1px solid rgba(244,63,94,0.25)"
-            : "1px solid rgba(15,23,42,0.08)",
-          boxShadow: "0 10px 30px rgba(2,6,23,.12)",
-          cursor: "pointer",
-        }}
-      >
-        <span style={{ fontSize: 18 }} aria-hidden="true">
-          {muted ? "🔇" : "🔊"}
-        </span>
-      </button>
-
       {/* Messages */}
       <ul
         className="chat-list"
@@ -122,7 +88,7 @@ export default function Chat() {
         style={{
           listStyle: "none",
           margin: 0,
-          padding: "88px 0 96px", // top space for header/mute; bottom for input bar
+          padding: "16px 0 96px", // bottom space for input bar
           minHeight: "100vh",
         }}
       >
@@ -145,7 +111,7 @@ export default function Chat() {
         ))}
       </ul>
 
-      {/* Input bar pinned bottom */}
+      {/* Bottom input bar (with mute inside) */}
       <form
         className="chat-inputbar"
         onSubmit={sendMessage}
@@ -165,16 +131,45 @@ export default function Chat() {
           borderTop: "1px solid rgba(15,23,42,0.06)",
         }}
       >
+        {/* Image upload */}
         <label title="Upload image" style={{ cursor: "pointer", fontSize: 18 }}>
           <input type="file" accept="image/*" hidden />
           🖼️
         </label>
 
+        {/* File attach */}
         <label title="Attach file" style={{ cursor: "pointer", fontSize: 18 }}>
           <input type="file" hidden />
           📎
         </label>
 
+        {/* Mute toggle (replaces Export) */}
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute Carys" : "Mute Carys"}
+          title={muted ? "Unmute Carys" : "Mute Carys"}
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: "50%",
+            display: "grid",
+            placeItems: "center",
+            background: muted ? "rgba(255,241,242,0.95)" : "rgba(255,255,255,0.92)",
+            color: muted ? "#be123c" : "#0f172a",
+            border: muted
+              ? "1px solid rgba(244,63,94,0.25)"
+              : "1px solid rgba(15,23,42,0.08)",
+            boxShadow: "0 4px 14px rgba(2,6,23,.10)",
+            cursor: "pointer",
+          }}
+        >
+          <span style={{ fontSize: 16 }} aria-hidden="true">
+            {muted ? "🔇" : "🔊"}
+          </span>
+        </button>
+
+        {/* Text input */}
         <input
           className="chat-input"
           placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
@@ -194,6 +189,7 @@ export default function Chat() {
           }}
         />
 
+        {/* Send */}
         <button
           className="send-btn"
           disabled={sending || !input.trim()}
