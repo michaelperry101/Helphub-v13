@@ -10,28 +10,29 @@ export default function Chat() {
   const [muted, setMuted] = useState(false);
   const listRef = useRef(null);
 
-  // Load/save mute preference
+  // Load mute preference once
   useEffect(() => {
     try {
       const m = localStorage.getItem("hh_mute") === "1";
       setMuted(m);
     } catch {}
   }, []);
-  const toggleMute = () => {
+
+  // Scroll to newest message
+  useEffect(() => {
+    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  function toggleMute() {
     const next = !muted;
     setMuted(next);
     try {
       localStorage.setItem("hh_mute", next ? "1" : "0");
-      if (next && "speechSynthesis" in window) {
-        // stop any current speech immediately
-        window.speechSynthesis.cancel();
+      if (next && typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel(); // stop any ongoing speech immediately
       }
     } catch {}
-  };
-
-  useEffect(() => {
-    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }
 
   async function sendMessage(e) {
     e?.preventDefault?.();
@@ -49,6 +50,7 @@ export default function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
+
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
@@ -58,12 +60,15 @@ export default function Chat() {
         const reply = data?.reply || "…";
         setMessages((m) => [...m, { role: "assistant", content: reply }]);
 
-        // Speak only when NOT muted
+        // Speak in British English if available, only when not muted
         try {
-          if (!muted && "speechSynthesis" in window) {
+          if (!muted && typeof window !== "undefined" && "speechSynthesis" in window) {
             const u = new SpeechSynthesisUtterance(reply);
-            const uk = window.speechSynthesis.getVoices().find(v => /en-GB/i.test(v.lang));
-            if (uk) u.voice = uk;
+            const voices = window.speechSynthesis.getVoices();
+            const enGB =
+              voices.find((v) => /en-GB/i.test(v.lang)) ||
+              voices.find((v) => /English/i.test(v.name));
+            if (enGB) u.voice = enGB;
             window.speechSynthesis.speak(u);
           }
         } catch {}
@@ -80,20 +85,20 @@ export default function Chat() {
 
   return (
     <div className="chat-wrap">
-      {/* Mute toggle — fixed at top-right of the chat page */}
+      {/* Mute toggle (icon-only) */}
       <button
         type="button"
-        className="mute-toggle"
+        className={`mute-fab ${muted ? "is-muted" : ""}`}
         aria-label={muted ? "Unmute Carys" : "Mute Carys"}
         title={muted ? "Unmute Carys" : "Mute Carys"}
         onClick={toggleMute}
       >
-        <span className="mute-icon" aria-hidden>
+        <span className="mute-fab-icon" aria-hidden="true">
           {muted ? "🔇" : "🔊"}
         </span>
-        <span className="mute-text">{muted ? "Muted" : "Voice on"}</span>
       </button>
 
+      {/* Messages */}
       <ul className="chat-list" ref={listRef}>
         {messages.map((m, i) => (
           <li key={i} className={`msg ${m.role}`}>
@@ -102,6 +107,7 @@ export default function Chat() {
         ))}
       </ul>
 
+      {/* Input bar */}
       <form className="chat-inputbar" onSubmit={sendMessage}>
         <label className="icon-btn" title="Upload image">
           <input type="file" accept="image/*" hidden />
@@ -111,22 +117,17 @@ export default function Chat() {
           <input type="file" hidden />
           📎
         </label>
-        <button
-          type="button"
-          className="icon-btn"
-          title="Upload"
-          onClick={() => alert("Upload action placeholder")}
-        >
-          ⬇️
-        </button>
 
         <input
           className="chat-input"
           placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage(e)}
           disabled={sending}
+          aria-label="Message input"
         />
+
         <button className="send-btn" disabled={sending || !input.trim()}>
           {sending ? "…" : "➤"}
         </button>
