@@ -1,108 +1,73 @@
 "use client";
+import { useRef, useState } from "react";
 
-import { useEffect, useRef, useState } from "react";
-import ChatInput from "./ChatInput";
-import MessageBubble from "./MessageBubble";
+export default function ChatInput({ onSend, sending }) {
+  const [value, setValue] = useState("");
+  const imgRef = useRef(null);
+  const fileRef = useRef(null);
 
-export default function Chat() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hi, I’m Carys. How can I help today?" },
-  ]);
-  const [sending, setSending] = useState(false);
-  const [muted, setMuted] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return localStorage.getItem("hh_muted") === "1";
-    } catch {
-      return false;
-    }
-  });
-
-  const listRef = useRef(null);
-
-  useEffect(() => {
-    listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("hh_muted", muted ? "1" : "0");
-    } catch {}
-  }, [muted]);
-
-  async function speak(text) {
-    if (muted || !text?.trim()) return;
-    try {
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          voice: "alloy", // try "verse" or "copper" for different tone
-          format: "mp3",
-        }),
-      });
-      if (!res.ok) return;
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.play().catch(() => {});
-    } catch {}
-  }
-
-  async function handleSend(text) {
-    const next = [...messages, { role: "user", content: text }];
-    setMessages(next);
-    setSending(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        const err =
-          data?.error ||
-          data?.message ||
-          "I couldn’t generate a response. Please try again.";
-        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err}` }]);
-      } else {
-        const reply = data?.reply || "…";
-        setMessages((m) => [...m, { role: "assistant", content: reply }]);
-        speak(reply);
-      }
-    } catch (err) {
-      setMessages((m) => [
-        ...m,
-        {
-          role: "assistant",
-          content: `⚠️ Network error: ${err?.message || err}`,
-        },
-      ]);
-    } finally {
-      setSending(false);
-    }
+  function submit(e) {
+    e.preventDefault();
+    const text = value.trim();
+    if (!text || sending) return;
+    onSend?.(text);
+    setValue("");
   }
 
   return (
-    <div className="chat-wrap">
-      <ul className="chat-list" ref={listRef}>
-        {messages.map((m, i) => (
-          <li key={i} className={`msg ${m.role}`}>
-            <MessageBubble role={m.role} content={m.content} />
-          </li>
-        ))}
-      </ul>
+    <form className="compose" onSubmit={submit}>
+      {/* Media actions */}
+      <div className="compose-group">
+        <button
+          type="button"
+          className="compose-btn"
+          aria-label="Add image"
+          onClick={() => imgRef.current?.click()}
+          title="Add image"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6"/>
+            <path d="M8 10.5a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5Zm12 6-5.2-6.4a1 1 0 0 0-1.6 0L8 16l-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input ref={imgRef} type="file" accept="image/*" hidden />
+        </button>
 
-      <ChatInput
-        onSend={handleSend}
-        sending={sending}
-        muted={muted}
-        onToggleMute={() => setMuted((v) => !v)}
+        <button
+          type="button"
+          className="compose-btn"
+          aria-label="Attach file"
+          onClick={() => fileRef.current?.click()}
+          title="Attach file"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M19 12.5 11.5 20a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 1 1 5 5L9 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input ref={fileRef} type="file" hidden />
+        </button>
+      </div>
+
+      {/* Text field */}
+      <input
+        className="compose-input"
+        placeholder={sending ? "Carys is thinking…" : "Message Carys…"}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        disabled={sending}
+        aria-label="Message Carys"
       />
-    </div>
+
+      {/* Send */}
+      <button
+        type="submit"
+        className="compose-send"
+        disabled={sending || !value.trim()}
+        aria-label="Send"
+        title="Send"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 12h9M5 5l14 7-14 7 3-7-3-7Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+    </form>
   );
 }
