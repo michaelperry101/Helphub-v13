@@ -1,10 +1,10 @@
 // app/layout.js
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { SidebarProvider } from "@/components/SidebarContext";
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Script from "next/script";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { SidebarProvider } from "../components/SidebarContext";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
 export const metadata = {
   title: "HelpHub247",
@@ -25,14 +25,14 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        {/* 👇 ElevenLabs voice widget script */}
+        {/* ElevenLabs Convai widget script (for your embedded mic) */}
         <Script
           src="https://unpkg.com/@elevenlabs/convai-widget-embed"
           strategy="afterInteractive"
         />
       </head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider defaultTheme="light">
           <SidebarProvider>
             <Header />
             <Sidebar />
