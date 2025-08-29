@@ -1,8 +1,8 @@
 export default function MessageBubble({ role, children }) {
-  const isUser = role === 'user';
+  const mine = role === "user";
   return (
-    <div className={`msg ${isUser ? 'user' : 'ai'}`}>
-      {children}
-    </div>
+    <li className={`msg ${mine ? "user" : "assistant"}`}>
+      <div className="bubble">{children}</div>
+    </li>
   );
 }
