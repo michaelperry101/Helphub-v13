@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 export default function ChatInput({ onSend, sending, muted, onToggleMute }) {
   const [input, setInput] = useState("");
-  const fileRef = useRef(null);
-  const imageRef = useRef(null);
 
   function submit(e) {
-    e?.preventDefault?.();
+    e.preventDefault();
     const text = input.trim();
     if (!text || sending) return;
     onSend(text);
@@ -16,41 +14,55 @@ export default function ChatInput({ onSend, sending, muted, onToggleMute }) {
   }
 
   return (
-    <form className="chat-inputbar" onSubmit={submit}>
-      {/* image */}
-      <label className="icon-btn" title="Upload image">
-        <input ref={imageRef} type="file" accept="image/*" hidden />
-        <span className="icon img" aria-hidden>🖼️</span>
-      </label>
-
-      {/* file */}
-      <label className="icon-btn" title="Attach file">
-        <input ref={fileRef} type="file" hidden />
-        <span className="icon clip" aria-hidden>📎</span>
-      </label>
-
-      {/* Mute / Voice toggle (replaces export) */}
+    <form
+      onSubmit={submit}
+      className="chat-inputbar flex items-center gap-2 px-3 py-2 border-t bg-white"
+    >
+      {/* Attach buttons */}
       <button
         type="button"
-        className={`icon-btn mute ${muted ? "on" : ""}`}
-        title={muted ? "Unmute Carys" : "Mute Carys"}
+        className="p-2 rounded-full hover:bg-gray-100"
+        title="Upload image"
+      >
+        🖼️
+      </button>
+
+      <button
+        type="button"
+        className="p-2 rounded-full hover:bg-gray-100"
+        title="Attach file"
+      >
+        📎
+      </button>
+
+      {/* Mute toggle */}
+      <button
+        type="button"
         onClick={onToggleMute}
-        aria-pressed={muted}
+        className={`p-2 rounded-full hover:bg-gray-100 ${
+          muted ? "text-red-500" : "text-green-600"
+        }`}
+        title={muted ? "Unmute Carys" : "Mute Carys"}
       >
         {muted ? "🔇" : "🔊"}
       </button>
 
+      {/* Input */}
       <input
-        className="chat-input"
+        className="flex-1 px-3 py-2 rounded-full border bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         disabled={sending}
-        aria-label="Message Carys"
       />
 
-      <button className="send-btn" disabled={sending || !input.trim()}>
-        {sending ? "…" : "Send"}
+      {/* Send */}
+      <button
+        type="submit"
+        disabled={sending || !input.trim()}
+        className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+      >
+        ➤
       </button>
     </form>
   );
