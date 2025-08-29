@@ -1,68 +1,72 @@
 "use client";
+import { useRef, useState } from "react";
 
-import { useState } from "react";
-
-export default function ChatInput({ onSend, sending, muted, onToggleMute }) {
-  const [input, setInput] = useState("");
+export default function ChatInput({ onSend, sending }) {
+  const [value, setValue] = useState("");
+  const imgRef = useRef(null);
+  const fileRef = useRef(null);
 
   function submit(e) {
     e.preventDefault();
-    const text = input.trim();
+    const text = value.trim();
     if (!text || sending) return;
-    onSend(text);
-    setInput("");
+    onSend?.(text);
+    setValue("");
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="chat-inputbar flex items-center gap-2 px-3 py-2 border-t bg-white"
-    >
-      {/* Attach buttons */}
-      <button
-        type="button"
-        className="p-2 rounded-full hover:bg-gray-100"
-        title="Upload image"
-      >
-        🖼️
-      </button>
+    <form className="compose" onSubmit={submit}>
+      {/* Media actions */}
+      <div className="compose-group">
+        <button
+          type="button"
+          className="compose-btn"
+          aria-label="Add image"
+          onClick={() => imgRef.current?.click()}
+          title="Add image"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6"/>
+            <path d="M8 10.5a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5Zm12 6-5.2-6.4a1 1 0 0 0-1.6 0L8 16l-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input ref={imgRef} type="file" accept="image/*" hidden />
+        </button>
 
-      <button
-        type="button"
-        className="p-2 rounded-full hover:bg-gray-100"
-        title="Attach file"
-      >
-        📎
-      </button>
+        <button
+          type="button"
+          className="compose-btn"
+          aria-label="Attach file"
+          onClick={() => fileRef.current?.click()}
+          title="Attach file"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M19 12.5 11.5 20a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 1 1 5 5L9 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input ref={fileRef} type="file" hidden />
+        </button>
+      </div>
 
-      {/* Mute toggle */}
-      <button
-        type="button"
-        onClick={onToggleMute}
-        className={`p-2 rounded-full hover:bg-gray-100 ${
-          muted ? "text-red-500" : "text-green-600"
-        }`}
-        title={muted ? "Unmute Carys" : "Mute Carys"}
-      >
-        {muted ? "🔇" : "🔊"}
-      </button>
-
-      {/* Input */}
+      {/* Text field */}
       <input
-        className="flex-1 px-3 py-2 rounded-full border bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        className="compose-input"
+        placeholder={sending ? "Carys is thinking…" : "Message Carys…"}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
         disabled={sending}
+        aria-label="Message Carys"
       />
 
       {/* Send */}
       <button
         type="submit"
-        disabled={sending || !input.trim()}
-        className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+        className="compose-send"
+        disabled={sending || !value.trim()}
+        aria-label="Send"
+        title="Send"
       >
-        ➤
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 12h9M5 5l14 7-14 7 3-7-3-7Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </button>
     </form>
   );
