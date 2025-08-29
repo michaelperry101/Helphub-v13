@@ -231,3 +231,33 @@ elevenlabs-convai:hover {
 elevenlabs-convai:active {
   transform: scale(0.95);
 }
+:root{ --bg:#fff; --text:#111; --ring:#e5e7eb; --surface:#f8fafc; }
+[data-theme="dark"]{ --bg:#0b0f14; --text:#e5e7eb; --ring:#223; --surface:#0f141a; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--bg); color:var(--text); font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Arial; }
+.app-header{
+  position:sticky; top:0; z-index:50; height:64px; border-bottom:1px solid var(--ring);
+  backdrop-filter:saturate(180%) blur(6px); background:color-mix(in oklab, var(--bg) 86%, transparent);
+  display:flex; align-items:center; justify-content:center;
+}
+.hamburger{
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  height:40px; width:40px; border-radius:12px; border:1px solid var(--ring); background:var(--surface); cursor:pointer;
+}
+.logo-link{ display:flex; align-items:center; justify-content:center; }
+.logo-link img{ max-height:54px; object-fit:contain; }
+.app-content{ display:flex; min-height:calc(100dvh - 64px); }
+.sidebar{
+  position:fixed; inset:64px auto 0 0; width:280px; transform:translateX(-100%);
+  transition:transform .2s ease; border-right:1px solid var(--ring); background:var(--bg); z-index:40; padding:12px;
+}
+.sidebar.open{ transform:translateX(0); }
+.sidebar .menu{ list-style:none; margin:0; padding:0; }
+.sidebar .menu li{ margin:6px 0; }
+.sidebar .menu a{ display:block; padding:10px 12px; border-radius:10px; text-decoration:none; color:inherit; }
+.sidebar .menu a:hover{ background:var(--surface); }
+.sidebar .menu a.active{ background:var(--surface); font-weight:600; }
+@media (min-width: 1024px){
+  .sidebar{ position:sticky; transform:none; inset:auto; width:280px; }
+  .app-content{ margin-left:280px; }
+}
