@@ -209,3 +209,25 @@ html[data-theme="dark"] {
   .bubble { font-size: 16px; max-width: min(720px, 80vw); }
   .compose { gap: 12px; }
 }
+/* ElevenLabs mic button inside chat bar */
+elevenlabs-convai {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0 6px;
+  border-radius: 50%;
+  background: var(--primary, #4f46e5); /* Use your theme color */
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+elevenlabs-convai:hover {
+  background: var(--primary-hover, #4338ca);
+  transform: scale(1.05);
+}
+
+elevenlabs-convai:active {
+  transform: scale(0.95);
+}
