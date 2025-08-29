@@ -1,28 +1,25 @@
-'use client';
-import Link from 'next/link';
-import { useEffect } from 'react';
-import { Menu } from 'lucide-react';
-import { useSidebar } from '../components/SidebarContext';
+"use client";
+import { useSidebar } from "./SidebarContext";
 
 export default function Header() {
   const { toggle } = useSidebar();
-
-  useEffect(()=>{
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(()=>{});
-    }
-  }, []);
-
   return (
-    <header className="header">
-      <div className="header-inner">
-        <button className="hamburger" aria-label="Open menu" onClick={toggle}>
-          <Menu size={22} />
-        </button>
-        <Link href="/" className="logo-link" aria-label="HelpHub247 home">
-          <img src="/logo.png" alt="HelpHub247" />
-        </Link>
-      </div>
+    <header className="app-header">
+      <button
+        className="hamburger"
+        aria-label="Open menu"
+        onClick={toggle}
+        type="button"
+      >
+        ☰
+      </button>
+
+      <a href="/" className="logo-link" aria-label="HelpHub247 Home">
+        <img src="/logo.png" alt="HelpHub247" />
+      </a>
+
+      {/* right side spacer */}
+      <div style={{ width: 40 }} />
     </header>
   );
 }
