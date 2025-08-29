@@ -261,3 +261,15 @@ body{ margin:0; background:var(--bg); color:var(--text); font-family: ui-sans-se
   .sidebar{ position:sticky; transform:none; inset:auto; width:280px; }
   .app-content{ margin-left:280px; }
 }
+/* --- ElevenLabs widget positioning guard --- */
+.voice-widget {
+  position: fixed;
+  right: 16px;
+  bottom: 104px; /* keep it above your chat input bar */
+  z-index: 60;
+}
+
+/* If your input bar height changes on mobile, adjust this: */
+@media (max-width: 600px) {
+  .voice-widget { bottom: 96px; }
+}
