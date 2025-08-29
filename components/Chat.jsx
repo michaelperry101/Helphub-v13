@@ -70,3 +70,18 @@ export default function Chat() {
     </div>
   );
 }
+async function playCarys(text, voiceId = "Rachel") {
+  try {
+    const res = await fetch("/api/voice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId }), // swap voiceId for a UK voice when you pick one
+    });
+    if (!res.ok) return;
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
+  } catch {}
+}
