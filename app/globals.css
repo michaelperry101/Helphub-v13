@@ -243,3 +243,10 @@ html[data-theme="dark"]{
 .mute-toggle.is-muted{ background:#fff1f2; color:#be123c; border-color:#fecdd3; }
 [data-theme="dark"] .mute-toggle{ background:#111418; color:#e5e7eb; border-color:#2a2f36; box-shadow:0 10px 30px rgba(0,0,0,.45); }
 [data-theme="dark"] .mute-toggle.is-muted{ background:#2a1117; border-color:#7f1d1d; color:#fecaca; }
+.chat-inputbar {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
