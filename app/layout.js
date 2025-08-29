@@ -1,10 +1,12 @@
 // app/layout.js
 import "./globals.css";
 import Script from "next/script";
-import { ThemeProvider } from "../components/ThemeProvider";
-import { SidebarProvider } from "../components/SidebarContext";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+
+// If your project has these, keep them. If not, remove the imports & JSX usage.
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { SidebarProvider } from "@/components/SidebarContext";
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata = {
   title: "HelpHub247",
@@ -15,7 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Prevent theme flash before hydration */}
+        {/* Prevent theme flash if you're using themes */}
         <Script id="set-theme" strategy="beforeInteractive">
           {`
             try {
@@ -25,14 +27,16 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        {/* ElevenLabs Convai widget script (for your embedded mic) */}
+        {/* ElevenLabs Convai widget loader (runs only on the client) */}
         <Script
           src="https://unpkg.com/@elevenlabs/convai-widget-embed"
           strategy="afterInteractive"
         />
       </head>
+
       <body>
-        <ThemeProvider defaultTheme="light">
+        {/* If you don’t have these providers/components, remove them */}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <SidebarProvider>
             <Header />
             <Sidebar />
