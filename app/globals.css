@@ -250,3 +250,137 @@ html[data-theme="dark"]{
   border-top: 1px solid #e5e7eb;
   background: #fff;
 }
+/* ---------------- Chat Input (Compose) ---------------- */
+
+:root{
+  --bg: #ffffff;
+  --text: #0f172a;         /* slate-900 */
+  --muted: #6b7280;        /* gray-500 */
+  --ring: #e5e7eb;         /* gray-200 */
+  --shadow: 0 12px 30px rgba(2, 8, 23, .06);
+  --accent: #0ea5e9;       /* sky-500 */
+  --green: #10b981;        /* emerald-500 */
+  --purple: #8b5cf6;       /* violet-500 */
+  --send: #0284c7;         /* sky-600 */
+}
+
+@supports (padding: max(0px)) {
+  .compose {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  }
+}
+
+.compose{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  padding: 12px 14px;
+  max-width: 880px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 20%, rgba(255,255,255,.98) 100%);
+  backdrop-filter: blur(10px);
+  z-index: 60;
+}
+
+.compose::before{
+  content:"";
+  position: absolute;
+  inset: -8px 0 0 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* icon group (left) */
+.compose-group{
+  display: flex;
+  gap: 10px;
+}
+
+/* icon buttons */
+.compose-btn{
+  height: 42px;
+  width: 42px;
+  border-radius: 14px;
+  border: 1px solid var(--ring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--muted);
+  box-shadow: var(--shadow);
+  transition: transform .12s ease, color .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.compose-btn:hover{
+  transform: translateY(-1px);
+  color: var(--text);
+  border-color: #d1d5db;
+}
+
+/* give each icon a hint of color */
+.compose-btn:nth-child(1){ color: var(--green); }
+.compose-btn:nth-child(2){ color: var(--purple); }
+
+/* main text input */
+.compose-input{
+  height: 48px;
+  border-radius: 24px;
+  border: 1px solid var(--ring);
+  background: var(--bg);
+  padding: 0 18px;
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+  box-shadow: var(--shadow);
+  transition: border-color .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.compose-input::placeholder{
+  color: #9ca3af; /* gray-400 */
+}
+
+.compose-input:focus{
+  border-color: #cbd5e1; /* slate-300 */
+  box-shadow: 0 8px 28px rgba(2,8,23,.08), 0 0 0 4px rgba(14,165,233,.08); /* focus ring */
+}
+
+/* send button */
+.compose-send{
+  height: 48px;
+  width: 56px;
+  border-radius: 24px;
+  border: 1px solid var(--ring);
+  background: var(--send);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 22px rgba(2,132,199,.25);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease, opacity .12s ease;
+}
+
+.compose-send:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(2,132,199,.32);
+}
+
+.compose-send:disabled{
+  opacity: .5;
+  transform: none;
+  box-shadow: var(--shadow);
+  background: #93c5fd; /* light sky when disabled */
+}
+
+/* keep history above the bar on small screens */
+.chat-page{
+  padding-bottom: 110px; /* space for compose */
+}
+@media (min-width: 640px){
+  .chat-page{ padding-bottom: 120px; }
+}
