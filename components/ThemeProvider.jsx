@@ -1,47 +1,37 @@
-// components/ThemeProvider.jsx
 "use client";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-import { createContext, useContext, useEffect, useState } from "react";
+const ThemeCtx = createContext(null);
 
-/**
- * Lightweight ThemeProvider with no external deps.
- * - Reads/writes theme to localStorage ("hh_theme")
- * - Updates <html data-theme="..."> and (optionally) html class (light/dark)
- */
-
-const ThemeCtx = createContext({ theme: "light", setTheme: () => {} });
-export const useTheme = () => useContext(ThemeCtx);
-
-export function ThemeProvider({ children, attribute = "class", defaultTheme = "light", enableSystem = false }) {
+export function ThemeProvider({ children, defaultTheme = "light" }) {
   const [theme, setTheme] = useState(defaultTheme);
 
-  // initial load: read saved theme or system (if enabled)
+  // Load saved theme on mount
   useEffect(() => {
     try {
-      let t = localStorage.getItem("hh_theme");
-      if (!t && enableSystem && typeof window !== "undefined" && window.matchMedia) {
-        t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      }
-      t = t || defaultTheme || "light";
+      const saved = localStorage.getItem("hh_theme");
+      const t = saved || defaultTheme;
       setTheme(t);
-    } catch {
-      setTheme(defaultTheme || "light");
-    }
-  }, [defaultTheme, enableSystem]);
-
-  // apply + persist
-  useEffect(() => {
-    try {
-      // persist
-      localStorage.setItem("hh_theme", theme);
-      // apply to <html>
-      document.documentElement.dataset.theme = theme;
-      if (attribute === "class") {
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(theme);
-      }
+      document.documentElement.dataset.theme = t;
     } catch {}
-  }, [theme, attribute]);
+  }, [defaultTheme]);
 
-  return <ThemeCtx.Provider value={{ theme, setTheme }}>{children}</ThemeCtx.Provider>;
+  const value = useMemo(() => ({
+    theme,
+    setTheme: (t) => {
+      setTheme(t);
+      try {
+        localStorage.setItem("hh_theme", t);
+      } catch {}
+      document.documentElement.dataset.theme = t;
+    }
+  }), [theme]);
+
+  return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeCtx);
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  return ctx;
 }
