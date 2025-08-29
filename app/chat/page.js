@@ -13,3 +13,21 @@ export default function ChatPage() {
     </div>
   );
 }
+import dynamic from "next/dynamic";
+const ConvaiWidget = dynamic(() => import("../../components/ConvaiWidget"), {
+  ssr: false,
+});
+
+export const metadata = { title: "Chat — Carys" };
+
+export default function ChatPage() {
+  return (
+    <div className="page chat-page">
+      {/* Your existing Chat UI if you want to keep it */}
+      {/* <Chat /> */}
+
+      {/* ElevenLabs AI Voice Agent */}
+      <ConvaiWidget />
+    </div>
+  );
+}
