@@ -1,817 +1,157 @@
-/* =====================================================================
-   HelpHub247 — Global Styles (replace your entire app/globals.css)
-   ===================================================================== */
+/* ===========================
+   HelpHub247 — globals.css
+   Replace your file with this
+   =========================== */
 
-/* -------- CSS Reset / Base -------- */
-*, *::before, *::after { box-sizing: border-box; }
-:where(html, body) { height: 100%; }
-:where(body) {
-  margin: 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+/* ---------- Base / Reset ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --bg:#ffffff;
+  --text:#0f172a;        /* slate-900 */
+  --muted:#475569;       /* slate-600 */
+  --border:#e5eaf1;      /* light border */
+  --brand:#2563eb;       /* blue-600 */
+  --brand-2:#1d4ed8;     /* blue-700 */
+  --shadow:0 6px 24px rgba(2,6,23,.08);
+  --radius:18px;
+  --header-h:64px;
+}
+
+html, body { height: 100%; }
+body{
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+}
+
+a{ color: inherit; text-decoration: none; }
+
+/* Keep content from sliding under fixed header */
+.app-content{ padding-top: var(--header-h); }
+
+/* ---------- Header (logo centered, hamburger left) ---------- */
+.header{
+  height: var(--header-h);
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
   background: var(--bg);
-  color: var(--text);
-}
-
-/* -------- Design Tokens -------- */
-:root {
-  /* light theme */
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-2: #f8fafc;        /* subtle panels */
-  --text: #0f172a;              /* slate-900 */
-  --muted: #64748b;             /* slate-500 */
-  --border: #e5e7eb;            /* gray-200 */
-  --shadow: 0 8px 30px rgba(2, 8, 23, .06);
-
-  /* brand */
-  --brand: #0ea5a4;             /* teal-500 */
-  --brand-2: #14b8a6;           /* teal-500/600 */
-  --ring: rgba(14, 165, 164, .25);
-
-  /* UI */
-  --pill: #f1f5f9;              /* slate-100/200 */
-  --danger-bg: #fff0f0;
-}
-
-/* Optional dark palette (enable by setting data-theme="dark" on <html>) */
-html[data-theme="dark"] {
-  --bg: #0b1220;
-  --surface: #0f172a;
-  --surface-2: #111827;
-  --text: #e5e7eb;
-  --muted: #94a3b8;
-  --border: #1f2937;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-
-  --pill: #0b1220;
-  --ring: rgba(45, 212, 191, .25);
-}
-
-/* -------- Utils -------- */
-.container { max-width: 1120px; margin-inline: auto; padding-inline: 12px; }
-.muted { color: var(--muted); }
-.center { text-align: center; }
-
-:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 10px;
-}
-
-/* =====================================================================
-   Header
-   ===================================================================== */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 40;               /* below sidebar/backdrop */
-  background: var(--surface);
   border-bottom: 1px solid var(--border);
-}
-.header-inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;   /* center the logo */
-  position: relative;        /* for hamburger absolute */
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* Hamburger left, rounded “chip” */
-.hamburger {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 42px; height: 42px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  display: grid;
-  place-items: center;
-  gap: 3px;
-  padding: 0;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-}
-.hamburger span {
-  display: block;
-  width: 18px;
-  height: 2px;
-  background: #1f2937;
-  border-radius: 1px;
+.header-inner{
+  width: 100%; max-width: 1120px; padding: 0 14px;
+  display: grid; grid-template-columns: 64px 1fr 64px; align-items: center;
 }
 
-/* Logo link centered */
-.logo-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  line-height: 0;
-  padding: 4px 8px;
-  border-radius: 12px;
-}
-.logo-link img { height: 54px; width: auto; object-fit: contain; }
-
-/* =====================================================================
-   Layout
-   ===================================================================== */
-.app-content { max-width: 1120px; margin: 0 auto; padding: 16px 12px 24px; }
-.page { min-height: calc(100dvh - 88px); }
-
-/* =====================================================================
-   Sidebar (overlay, bubble pills)
-   ===================================================================== */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.35);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .18s ease;
-  z-index: 49;                     /* under sidebar but above header/chat */
-}
-.backdrop.show { opacity: 1; pointer-events: auto; }
-
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 100dvh;
-  width: 300px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  transform: translateX(-100%);
-  transition: transform .18s ease;
-  padding: 86px 14px 16px;
-  z-index: 50;                     /* overlay everything */
-}
-.sidebar.open { transform: translateX(0); }
-
-.menu { display: grid; gap: 10px; }
-.menu-pill {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: 999px;
-  background: var(--pill);
-  color: var(--text);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  transition: border-color .15s ease, transform .06s ease;
-}
-.menu-pill:hover { border-color: #cbd5e1; }
-.menu-pill:active { transform: translateY(1px); }
-.menu-pill.active { outline: 2px solid var(--ring); outline-offset: 1px; }
-
-.pill-ico {
-  width: 28px; height: 28px;
-  display: grid; place-items: center;
-  border-radius: 999px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  font-size: 16px;
-}
-
-.sidebar-footer {
-  margin-top: 16px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* =====================================================================
-   Chat Window + Input Bar (polished, mobile-first)
-   ===================================================================== */
-.chat-wrap {
-  display: grid;
-  grid-template-rows: 1fr auto;
-  min-height: calc(100dvh - 88px);
-}
-.chat-list {
-  list-style: none;
-  margin: 0;
-  padding: 8px 0 120px;     /* extra room above the fixed input bar */
-  display: grid;
-  gap: 12px;
-}
-.msg { display: flex; }
-.msg.user { justify-content: flex-end; }
-.bubble {
-  max-width: min(720px, 90%);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 12px 14px;
-  border-radius: 16px;
-  box-shadow: 0 6px 22px rgba(2,8,23,.06);
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-.msg.user .bubble {
-  background: var(--brand);
-  border-color: transparent;
-  color: #ffffff;
-}
-
-/* Input Bar – fixed, glassy */
-.chat-inputbar {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 16px;
-  width: min(980px, calc(100% - 24px));
-  display: grid;
-  grid-template-columns: auto auto 1fr auto auto; /* img, clip, input, mute, send */
-  gap: 10px;
-  align-items: center;
-  background: color-mix(in oklab, var(--surface), transparent 20%);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 10px;
-  z-index: 45;
+.hamburger{
+  place-self: center start;
+  width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--border); background: #fff;
   box-shadow: var(--shadow);
 }
-
-/* Icon buttons (coloured accents) */
-.icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  display: grid;
-  place-items: center;
-  font-size: 20px;
-  cursor: pointer;
+.hamburger span,.hamburger::before,.hamburger::after{
+  content:""; width: 22px; height: 2px; background: var(--text); display: block;
+  border-radius: 2px;
 }
-.icon-btn:hover { border-color: #cbd5e1; }
-.icon-btn.muted { background: var(--danger-bg); }
+.hamburger::before{ transform: translateY(-6px); }
+.hamburger::after{  transform: translateY(6px); }
 
-/* Input field */
-.chat-input {
-  width: 100%;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 0 14px;
-  font-size: 16px;
-  outline: none;
-  background: var(--surface);
-  color: var(--text);
-}
-.chat-input::placeholder { color: var(--muted); }
-.chat-input:focus {
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px var(--ring);
-}
+/* Centered brand */
+.brand{ display:flex; align-items:center; justify-content:center; gap:8px; }
+.brand img{ height: 28px; width:auto; display:block; }
+.brand .logo-text{ font-weight: 800; letter-spacing:.2px; }
 
-/* Send button (brand pill) */
-.send-btn {
-  width: 52px;
-  height: 44px;
-  border-radius: 14px;
-  background: var(--brand);
-  color: #fff;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-.send-btn:disabled { opacity: .6; cursor: not-allowed; }
-.send-btn:not(:disabled):hover { background: var(--brand-2); }
-
-/* =====================================================================
-   Responsive
-   ===================================================================== */
-@media (max-width: 640px) {
-  .logo-link img { height: 46px; }
-
-  .chat-inputbar {
-    grid-template-columns: auto auto 1fr auto auto;
-    gap: 8px;
-    width: calc(100% - 16px);
-    bottom: 12px;
-    padding: 8px;
-  }
-  .icon-btn { width: 40px; height: 40px; font-size: 18px; }
-  .chat-input { height: 40px; }
-  .send-btn { height: 40px; width: 48px; }
-}
-
-/* Better spacing on very small phones */
-@media (max-width: 380px) {
-  .chat-inputbar { gap: 6px; }
-  .bubble { max-width: 92%; }
-}
-
-/* =====================================================================
-   Utility: hide Convai widget if you ever need to (optional)
-   ===================================================================== */
-/* elevenlabs-convai { display:none; } */
-/* =========================
-   MOBILE FIT & OVERRIDES
-   ========================= */
-html, body { max-width: 100%; overflow-x: hidden; }
-
-/* Make all images scale on small screens */
-img { max-width: 100%; height: auto; }
-
-/* Header spacing tighter on phones */
-@media (max-width: 640px) {
-  .header-inner { padding: 8px 10px; }
-  .logo-link img { height: 42px; }            /* smaller logo on phones */
-}
-
-/* Sidebar: use viewport width so it never overflows */
-.sidebar {
-  width: min(86vw, 320px);
-}
-@media (max-width: 640px) {
-  .sidebar { padding: 76px 12px 14px; }
-}
-
-/* Chat area: ensure no horizontal scroll and full height */
-.chat-wrap {
-  grid-template-rows: 1fr auto;
-  min-height: calc(100dvh - 80px);
-  overflow: hidden;
-}
-.chat-list {
-  padding: 8px 0 110px;                       /* room for input bar */
-}
-
-/* Bubbles: slightly narrower and softer on phones */
-@media (max-width: 640px) {
-  .bubble {
-    max-width: 94vw;
-    padding: 10px 12px;
-    border-radius: 14px;
-  }
-}
-
-/* Input bar: use vw so it always fits, reduce heights */
-.chat-inputbar {
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(960px, calc(100vw - 16px));      /* <-- key change */
-  bottom: 12px;
-  grid-template-columns: auto auto 1fr auto auto;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 18px;
-}
-@media (max-width: 640px) {
-  .icon-btn { width: 38px; height: 38px; font-size: 18px; }
-  .chat-input { height: 38px; font-size: 16px; }
-  .send-btn { height: 38px; width: 46px; font-size: 18px; }
-}
-
-/* Prevent any element from forcing wider than screen */
-.container, .app-content, .page { width: 100%; }
-/* ======= ElevenLabs voice panel embedded in chat bar ======= */
-.voice-panel {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  bottom: 82px; /* sits just above input bar */
-  width: min(980px, calc(100vw - 16px));
-  max-height: 55dvh;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
+/* ---------- Sidebar (left slide-in) ---------- */
+.sidebar{
+  position: fixed; inset: 0 auto 0 0; width: 290px; z-index: 60;
+  background: #fff; border-right: 1px solid var(--border);
+  transform: translateX(-100%); transition: transform .25s ease;
+  display:flex; flex-direction:column; padding: 16px;
   box-shadow: var(--shadow);
-  padding: 8px;
-  z-index: 48; /* above input bar (45) and below sidebar (50) */
-  overflow: hidden;
-
-  /* start hidden (collapsed) */
-  opacity: 0;
-  pointer-events: none;
-  transform-origin: bottom center;
-  transition: opacity .16s ease, transform .16s ease;
-  transform: translateX(-50%) translateY(12px) scale(.98);
 }
-.voice-panel.open {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(-50%) translateY(8px) scale(1);
+.sidebar.open{ transform: translateX(0); }
+
+.sidebar .section{ margin-top: 12px; }
+.sidebar h4{ font-size: 12px; color: var(--muted); margin: 12px 8px; text-transform: uppercase; letter-spacing:.08em; }
+.sidebar a, .sidebar button{
+  display:flex; align-items:center; gap:10px;
+  padding: 12px 10px; border-radius: 12px; border: 1px solid transparent;
+  background: transparent; cursor:pointer; width:100%; text-align:left; color: var(--text);
+}
+.sidebar a:hover, .sidebar button:hover{
+  background:#f8fafc; border-color: var(--border);
 }
 
-/* Tighter on phones */
-@media (max-width: 640px) {
-  .voice-panel {
-    bottom: 70px;
-    width: calc(100vw - 12px);
-    border-radius: 14px;
-  }
+.overlay{
+  position: fixed; inset: 0; background: rgba(2,6,23,.35);
+  backdrop-filter: blur(1px); z-index: 55; display:none;
+}
+.overlay.show{ display:block; }
+
+/* ---------- Home (hero) ---------- */
+.hero{
+  min-height: calc(100dvh - var(--header-h));
+  display:grid; place-items:center; padding: 28px 16px;
 }
 
-/* Make the custom element flex to container */
-elevenlabs-convai {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-/* ElevenLabs voice-only chat page */
-.voice-only-wrap {
-  position: relative;
-  width: min(1100px, 100%);
-  margin: 0 auto;
-  padding: 12px;
+.hero-card{
+  max-width: 760px; width:100%;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  gap: 18px; padding: 28px 20px;
 }
 
-elevenlabs-convai {
-  display: block;
-  width: 100%;
-  min-height: min(70dvh, 720px);
-  border-radius: 16px;
-  overflow: hidden;
-  /* Optional frame styling (comment if you want it bare) */
-  background: var(--surface, #fff);
-  border: 1px solid var(--border, #e6e6e6);
-  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+.hero-logo img{ width: 120px; height:auto; }
+
+.hero h1{
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 800; letter-spacing:.2px;
 }
 
-@media (max-width: 640px) {
-  .voice-only-wrap { padding: 8px; }
-  elevenlabs-convai { min-height: 70dvh; }
-}
-/* Wrap keeps messages + bar stacked */
-.chat-wrap {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
+.hero p{
+  font-size: clamp(14px, 3.2vw, 18px); color: var(--muted);
 }
 
-/* Message list above */
-.chat-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
-
-/* ElevenLabs bar at bottom */
-.chat-inputbar.eleven-chat {
-  border-top: 1px solid var(--border, #ddd);
-  padding: 8px;
-  background: var(--surface, #fff);
-}
-
-/* Force ElevenLabs to look like an input bar */
-.chat-inputbar.eleven-chat elevenlabs-convai {
-  display: block;
-  width: 100%;
-  min-height: 64px;   /* height of an input bar */
-  max-height: 300px;  /* stops it from overtaking screen */
-  border-radius: 12px;
-  border: 1px solid var(--border, #ccc);
-  overflow: hidden;
-}
-
-/* Mobile tweaks */
-@media (max-width: 640px) {
-  .chat-inputbar.eleven-chat elevenlabs-convai {
-    min-height: 56px;
-    border-radius: 10px;
-  }
-}
-/* ===== Layout skeleton ===== */
-.chat-wrap {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-}
-
-.chat-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-}
-
-/* ===== Inline ElevenLabs bar at bottom ===== */
-.chat-inputbar.eleven-inline {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px 12px;
-  background: var(--surface, #fff);
-  border-top: 1px solid var(--border, #e6e8eb);
-}
-
-.chat-inputbar.eleven-inline elevenlabs-convai {
-  display: block;
-  width: 100%;
-  min-height: 64px;          /* feels like a chat bar */
-  max-height: 320px;         /* stops takeover on small screens */
-  border: 1px solid var(--border, #dcdfe4);
-  border-radius: 14px;
-  overflow: hidden;
-}
-
-/* Mobile tweaks */
-@media (max-width: 640px) {
-  .chat-inputbar.eleven-inline {
-    padding: 8px;
-  }
-  .chat-inputbar.eleven-inline elevenlabs-convai {
-    min-height: 56px;
-    border-radius: 12px;
-  }
-}
-
-/* ===== HIDE ElevenLabs floating launcher/card completely ===== */
-/* The exact IDs/classes can vary; these rules aggressively suppress any injected launcher/card */
-#elevenlabs-convai-root,
-elevenlabs-convai-launcher,
-div[id*="elevenlabs"][class*="launcher"],
-div[class*="elevenlabs"][class*="launcher"],
-a[href*="elevenlabs"][class*="launcher"],
-div[style*="elevenlabs"][style*="position: fixed"],
-div[aria-label="ElevenLabs Conversational AI"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* Optional: keep your existing bubble styles */
-.msg { margin: 8px 0; display: flex; }
-.msg.assistant .bubble {
-  background: #f5f7fa;
-  color: #0f172a;
-  border-radius: 16px;
-  padding: 12px 14px;
-  max-width: 85%;
-}
-/* === One-page home layout === */
-.home {
-  min-height: 100dvh;              /* full viewport, safe on mobile */
-  display: grid;
-  grid-template-rows: 1fr auto;    /* hero (fills) + bar (bottom) */
-  background: #ffffff;
-}
-
-/* Centered hero */
-.hero {
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 24px 16px 96px;         /* leave room above bottom bar */
-}
-
-.hero-title {
-  margin: 14px 0 6px;
-  font-size: clamp(24px, 3.6vw, 34px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #0f172a;                  /* slate-900 */
-}
-
-.hero-tag {
-  margin: 0;
-  color: #475569;                  /* slate-600 */
-  font-size: clamp(14px, 2.6vw, 18px);
-}
-
-/* Inline ElevenLabs “chat bar” */
-.inline-voicebar {
-  position: sticky;                /* stays at bottom of page */
-  bottom: 0;
-  width: 100%;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: #fff;
-  border-top: 1px solid #e9eef3;
-  z-index: 40;
-}
-
-/* Make the element look like a chat input bar */
-.inline-voicebar elevenlabs-convai {
-  display: block;
-  width: 100%;
-  min-height: 64px;                /* bar height */
-  max-height: 320px;               /* prevent takeover */
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
-}
-
-/* Mobile tune */
-@media (max-width: 640px) {
-  .inline-voicebar { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  .inline-voicebar elevenlabs-convai { min-height: 56px; border-radius: 14px; }
-}
-
-/* — Hide ElevenLabs' floating “Need help?” launcher completely — */
-/* These selectors are intentionally aggressive; keep them. */
-#elevenlabs-convai-root,
-elevenlabs-convai-launcher,
-div[id*="elevenlabs"][class*="launcher"],
-div[class*="elevenlabs"][class*="launcher"],
-a[href*="elevenlabs"][class*="launcher"],
-div[style*="elevenlabs"][style*="position: fixed"],
-div[aria-label="ElevenLabs Conversational AI"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-/* ---------- Landing page ---------- */
-.home-landing{
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 24px 16px;
-  background:#fff;
-}
-.landing-hero{
-  text-align:center;
-  display:grid;
-  gap:12px;
-}
-.hero-title{
-  margin:6px 0 2px;
-  font-size:clamp(24px,3.4vw,36px);
-  font-weight:800;
-  letter-spacing:-0.02em;
-  color:#0f172a;
-}
-.hero-tag{
-  margin:0 0 14px;
-  color:#475569;
-  font-size:clamp(14px,2.6vw,18px);
-}
 .cta-primary{
-  display:inline-block;
-  padding:12px 18px;
-  border-radius:999px;
-  background:#0ea5e9;
-  color:#fff;
-  font-weight:700;
-  text-decoration:none;
-  box-shadow:0 8px 20px rgba(14,165,233,.25);
-  transition:transform .08s ease, box-shadow .2s ease, background .2s ease;
+  display:inline-block; padding: 14px 32px; border-radius: 9999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  color:#fff; font-weight:700; font-size:16px;
+  box-shadow: 0 10px 24px rgba(37,99,235,.22);
+  transition: transform .15s ease, filter .2s ease;
 }
-.cta-primary:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(14,165,233,.28); }
-.cta-primary:active{ transform:translateY(0); }
+.cta-primary:hover{ transform: translateY(-2px); filter: saturate(1.05); }
 
-/* ---------- Chat page layout ---------- */
-.chat-screen{
-  min-height:100dvh;
-  display:grid;
-  grid-template-rows:auto 1fr auto; /* header, transcript, voicebar */
-  background:#fff;
-}
-.chat-header{
-  position:sticky; top:0; z-index:10;
-  display:flex; gap:8px; align-items:last baseline;
-  padding:12px 16px;
-  background:#fff;
-  border-bottom:1px solid #eef2f7;
-}
-.chat-header h1{
-  margin:0; font-size:clamp(18px,2.8vw,22px); font-weight:800; color:#0f172a;
-}
-.muted{ color:#64748b; font-size:14px; }
-
-/* transcript area (blank for voice-first, but ready for future messages) */
-.chat-transcript{
-  padding:16px;
-  overflow:auto;
+/* ---------- ElevenLabs Chat Page ---------- */
+.eleven-page{
+  min-height: 100dvh; display:grid; grid-template-rows: auto 1fr; background:#fff;
 }
 
-/* Inline ElevenLabs bar at the bottom */
-.voicebar{
-  position:sticky; bottom:0; z-index:20;
-  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-  background:#fff;
-  border-top:1px solid #e9eef3;
+.eleven-header{
+  position: sticky; top: 0; z-index: 20;
+  display:flex; align-items:center; gap:12px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border); background:#fff;
 }
-.voicebar elevenlabs-convai{
-  display:block;
-  width:100%;
-  min-height:64px;            /* compact height to feel like a bar */
-  max-height:360px;           /* widget may expand when active */
-  border:1px solid #e2e8f0;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 6px 18px rgba(2,6,23,.08);
-}
-@media (max-width:640px){
-  .voicebar{ padding:8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  .voicebar elevenlabs-convai{ min-height:56px; border-radius:14px; }
-}
+.eleven-header .brand img{ height: 28px; }
+.eleven-header .title{ font-size: clamp(16px, 2.6vw, 20px); font-weight:800; }
 
-/* Hide ElevenLabs floating launcher (“Need help?” bubble) everywhere */
-#elevenlabs-convai-root,
-elevenlabs-convai-launcher,
-div[id*="elevenlabs"][class*="launcher"],
-div[class*="elevenlabs"][class*="launcher"],
-a[href*="elevenlabs"][class*="launcher"],
-div[aria-label="ElevenLabs Conversational AI"]{
-  display:none !important;
-  visibility:hidden !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-}
-/* ===== Header logo tidy & centering ===== */
-.site-header{
-  position: sticky; top: 0; z-index: 50;
-  background:#fff; border-bottom:1px solid #eef2f7;
-}
-.site-header .header-inner{
-  max-width: 1120px; margin: 0 auto; padding: 10px 12px;
-  position: relative; display:flex; align-items:center; justify-content:center;
-}
-.site-header .hamburger{ position:absolute; left:12px; top:50%; transform:translateY(-50%); }
-.site-header .logo-link{ display:inline-flex; align-items:center; justify-content:center; }
-.site-header .logo-link img{ height:28px; width:auto; }
+/* Space for the widget to breathe on mobile */
+.eleven-body{ padding: 12px; }
 
-/* ===== Landing ===== */
-.home-landing{ min-height:100dvh; display:grid; place-items:center; padding:24px 16px; background:#fff; }
-.landing-hero{ text-align:center; display:grid; gap:12px; }
-.hero-title{ margin:6px 0 2px; font-size:clamp(24px,3.4vw,36px); font-weight:800; color:#0f172a; }
-.hero-tag{ margin:0 0 14px; color:#475569; font-size:clamp(14px,2.6vw,18px); }
-.cta-primary{
-  display:inline-block; padding:12px 18px; border-radius:999px;
-  background:#0ea5e9; color:#fff; font-weight:700; text-decoration:none;
-  box-shadow:0 8px 20px rgba(14,165,233,.25);
-}
-.cta-primary:hover{ filter:brightness(1.05); }
+/* ---------- Utility ---------- */
+.container{ width:100%; max-width:1120px; margin:0 auto; padding: 0 14px; }
+.center{ text-align:center; }
+.muted{ color: var(--muted); }
 
-/* ===== Chat layout (header, transcript, bottom voice bar) ===== */
-.chat-screen{ min-height:100dvh; display:grid; grid-template-rows:auto 1fr auto; background:#fff; }
-.chat-header{ position:sticky; top:0; z-index:10; display:flex; gap:8px; align-items:baseline;
-  padding:12px 16px; background:#fff; border-bottom:1px solid #eef2f7; }
-.chat-header h1{ margin:0; font-size:clamp(18px,2.8vw,22px); font-weight:800; color:#0f172a; }
-.muted{ color:#64748b; font-size:14px; }
-.chat-transcript{ padding:16px; overflow:auto; }
-
-/* Bottom bar with inline ElevenLabs element */
-.voicebar{
-  position:sticky; bottom:0; z-index:20;
-  padding:10px 12px calc(10px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid #e9eef3;
-}
-.voicebar elevenlabs-convai{
-  display:block; width:100%; min-height:56px; border:1px solid #e2e8f0;
-  border-radius:16px; overflow:hidden; box-shadow:0 6px 18px rgba(2,6,23,.08);
-}
-@media (max-width:640px){
-  .voicebar{ padding:8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  .voicebar elevenlabs-convai{ border-radius:14px; }
-}
-
-/* Hide the default floating “Need help?” launcher if script injects it */
-#elevenlabs-convai-root,
-elevenlabs-convai-launcher,
-div[id*="elevenlabs"][class*="launcher"],
-div[class*="elevenlabs"][class*="launcher"],
-a[href*="elevenlabs"][class*="launcher"],
-div[aria-label="ElevenLabs Conversational AI"]{
-  display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important;
-}
-/* Chat page layout */
-.chat-screen{
-  min-height:100dvh; display:grid;
-  grid-template-rows:auto 1fr auto; background:#fff;
-}
-.chat-header{
-  position:sticky; top:0; z-index:10; background:#fff;
-  border-bottom:1px solid #eef2f7; padding:12px 16px;
-  display:flex; gap:8px; align-items:baseline;
-}
-.chat-header h1{ margin:0; font-size:clamp(18px,2.8vw,22px); font-weight:800; color:#0f172a; }
-.muted{ color:#64748b; font-size:14px; }
-.chat-transcript{ padding:16px; overflow:auto; }
-
-.voicebar{
-  position:sticky; bottom:0; z-index:20; background:#fff;
-  border-top:1px solid #e9eef3;
-  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-}
-.voicebar elevenlabs-convai{
-  display:block; width:100%; min-height:56px; border:1px solid #e2e8f0;
-  border-radius:16px; overflow:hidden; box-shadow:0 6px 18px rgba(2,6,23,.08);
-}
-@media (max-width:640px){
-  .voicebar{ padding:8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  .voicebar elevenlabs-convai{ border-radius:14px; }
-}
-
-/* Belt-and-braces: hide any floating launcher if it still appears */
-#elevenlabs-convai-root,
-elevenlabs-convai-launcher,
-div[id*="elevenlabs"][class*="launcher"],
-div[class*="elevenlabs"][class*="launcher"],
-a[href*="elevenlabs"][class*="launcher"],
-div[aria-label="ElevenLabs Conversational AI"]{
-  display:none !important; visibility:hidden !important;
-  opacity:0 !important; pointer-events:none !important;
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 640px){
+  .hamburger{ width:42px; height:42px; }
+  .brand img{ height:24px; }
+  .sidebar{ width: 86%; max-width: 320px; }
+  .hero-logo img{ width: 96px; }
+  .cta-primary{ width: 100%; max-width: 320px; padding: 14px 0; }
 }
