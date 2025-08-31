@@ -278,3 +278,63 @@ body.nav-open .overlay { opacity: 1; pointer-events: auto; }
   border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:14px; margin:10px 0;
 }
 .page details summary{ font-weight:600; cursor:pointer; }
+/* ===========================
+   Header / Logo / Hamburger
+   =========================== */
+.site-header{
+  position: sticky; top: 0; z-index: 60;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  height: 64px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Ensure logo is centered and above other elements */
+.logo-link{
+  display:block; margin:0 auto; line-height:0;
+  position:relative; z-index: 61;
+}
+.logo-link img{
+  display:block;
+  height: 48px;            /* bigger logo */
+  width: auto;             /* prevent stretch */
+  max-width: 240px;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+/* right spacer keeps true visual center */
+.header-right{ position:absolute; right:12px; width:44px; height:44px; top:50%; transform:translateY(-50%); }
+
+/* Reset any global button/span quirks for the hamburger */
+.hamburger{
+  all: unset;              /* wipe inherited button styles that cause stretching */
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:42px; height:42px; aspect-ratio:1/1;
+  border-radius:12px; border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  z-index: 61;             /* keep above content */
+}
+.hamburger:hover{
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border-color:rgba(0,0,0,.14);
+}
+.hamburger:active{ transform:translateY(-50%) scale(.98); }
+
+.hamburger span{
+  display:block;
+  width:20px; height:2px; border-radius:2px;
+  background:#111;
+  transition: transform .25s ease, opacity .2s ease;
+  position: relative;
+}
+.hamburger span + span{ margin-top:5px; }
+.hamburger.is-active span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.hamburger.is-active span:nth-child(2){ opacity:0; }
+.hamburger.is-active span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+/* Make sure nothing overlays the header unintentionally */
+header, .site-header, .logo-link, .hamburger { pointer-events:auto; }
