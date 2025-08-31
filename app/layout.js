@@ -1,7 +1,9 @@
 // app/layout.js
 import "./globals.css";
+import { SidebarProvider } from "@/components/SidebarContext";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import Script from "next/script";
 
 export const metadata = {
   title: "HelpHub247",
@@ -10,52 +12,28 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
-        {/* Prevent theme flash; simple light mode default */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const t = localStorage.getItem('hh_theme') || 'light';
-                document.documentElement.dataset.theme = t;
-              } catch(e){}
-            `,
-          }}
-        />
+        {/* theme-prevent flash */}
+        <Script id="set-theme" strategy="beforeInteractive">
+          {`
+            try {
+              var t = localStorage.getItem('hh_theme') || 'light';
+              document.documentElement.dataset.theme = t;
+            } catch(e) {}
+          `}
+        </Script>
       </head>
       <body>
-        <Header />
-        <Sidebar />
-        <main className="page-container">{children}</main>
-
-        {/* Small global script to toggle the sidebar and close on route/link click */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                const doc = document;
-                doc.addEventListener('click', (e)=>{
-                  const t = e.target;
-                  if(t && t.closest && t.closest('#hamburger')){
-                    e.preventDefault();
-                    doc.body.classList.toggle('nav-open');
-                  }
-                  if(t && t.closest && t.closest('.sidebar a')){
-                    doc.body.classList.remove('nav-open');
-                  }
-                  if(t && t.classList && t.classList.contains('overlay')){
-                    doc.body.classList.remove('nav-open');
-                  }
-                });
-              })();
-            `,
-          }}
-        />
+        <SidebarProvider>
+          <Header />
+          <Sidebar />
+          <main className="app-content">{children}</main>
+        </SidebarProvider>
       </body>
     </html>
   );
