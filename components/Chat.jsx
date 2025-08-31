@@ -8,8 +8,10 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [muted, setMuted] = useState(false);
   const listRef = useRef(null);
 
+  // auto-scroll
   useEffect(() => {
     listRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -30,24 +32,29 @@ export default function Chat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
-      const data = await res.json().catch(() => ({}));
 
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const err = data?.error || "Request failed";
-        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${err}` }]);
+        const errText =
+          data?.error ||
+          (data?.message ? `Error: ${data.message}` : "Request failed");
+        setMessages((m) => [...m, { role: "assistant", content: `⚠️ ${errText}` }]);
       } else {
         const reply = data?.reply || "…";
         setMessages((m) => [...m, { role: "assistant", content: reply }]);
 
-        // Optional TTS
-        try {
-          if ("speechSynthesis" in window) {
+        if (!muted && typeof window !== "undefined" && "speechSynthesis" in window) {
+          try {
             const u = new SpeechSynthesisUtterance(reply);
-            const uk = window.speechSynthesis.getVoices().find(v => /en-GB/i.test(v.lang));
+            const uk = window.speechSynthesis
+              .getVoices()
+              .find((v) => /en-GB/i.test(v.lang));
             if (uk) u.voice = uk;
+            u.rate = 1.03;
+            u.pitch = 1.02;
             window.speechSynthesis.speak(u);
-          }
-        } catch {}
+          } catch {}
+        }
       }
     } catch (err) {
       setMessages((m) => [
@@ -69,6 +76,7 @@ export default function Chat() {
         ))}
       </ul>
 
+      {/* input bar */}
       <form className="chat-inputbar" onSubmit={sendMessage}>
         <label className="icon-btn" title="Upload image">
           <input type="file" accept="image/*" hidden />
@@ -78,6 +86,7 @@ export default function Chat() {
           <input type="file" hidden />
           📎
         </label>
+
         <input
           className="chat-input"
           placeholder={sending ? "Carys is thinking..." : "Message Carys…"}
@@ -85,16 +94,22 @@ export default function Chat() {
           onChange={(e) => setInput(e.target.value)}
           disabled={sending}
         />
+
+        {/* mute toggle replaces old export button */}
+        <button
+          className={`icon-btn ${muted ? "muted" : ""}`}
+          type="button"
+          onClick={() => setMuted((m) => !m)}
+          title={muted ? "Unmute Carys" : "Mute Carys"}
+          aria-pressed={muted}
+        >
+          🔈
+        </button>
+
         <button className="send-btn" disabled={sending || !input.trim()}>
           {sending ? "…" : "➤"}
         </button>
       </form>
-
-      {/* --- ElevenLabs Convai Widget (your agent) --- */}
-      <div className="voice-widget">
-        <elevenlabs-convai agent-id="agent_3001k3vqn59yfb6tmb5mjwwd17jc"></elevenlabs-convai>
-      </div>
-      {/* -------------------------------------------- */}
     </div>
   );
 }
