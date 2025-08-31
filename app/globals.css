@@ -481,3 +481,72 @@ elevenlabs-convai {
     border-radius: 10px;
   }
 }
+/* ===== Layout skeleton ===== */
+.chat-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ===== Inline ElevenLabs bar at bottom ===== */
+.chat-inputbar.eleven-inline {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: var(--surface, #fff);
+  border-top: 1px solid var(--border, #e6e8eb);
+}
+
+.chat-inputbar.eleven-inline elevenlabs-convai {
+  display: block;
+  width: 100%;
+  min-height: 64px;          /* feels like a chat bar */
+  max-height: 320px;         /* stops takeover on small screens */
+  border: 1px solid var(--border, #dcdfe4);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Mobile tweaks */
+@media (max-width: 640px) {
+  .chat-inputbar.eleven-inline {
+    padding: 8px;
+  }
+  .chat-inputbar.eleven-inline elevenlabs-convai {
+    min-height: 56px;
+    border-radius: 12px;
+  }
+}
+
+/* ===== HIDE ElevenLabs floating launcher/card completely ===== */
+/* The exact IDs/classes can vary; these rules aggressively suppress any injected launcher/card */
+#elevenlabs-convai-root,
+elevenlabs-convai-launcher,
+div[id*="elevenlabs"][class*="launcher"],
+div[class*="elevenlabs"][class*="launcher"],
+a[href*="elevenlabs"][class*="launcher"],
+div[style*="elevenlabs"][style*="position: fixed"],
+div[aria-label="ElevenLabs Conversational AI"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Optional: keep your existing bubble styles */
+.msg { margin: 8px 0; display: flex; }
+.msg.assistant .bubble {
+  background: #f5f7fa;
+  color: #0f172a;
+  border-radius: 16px;
+  padding: 12px 14px;
+  max-width: 85%;
+}
