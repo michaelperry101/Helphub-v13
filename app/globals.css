@@ -374,3 +374,47 @@ img { max-width: 100%; height: auto; }
 
 /* Prevent any element from forcing wider than screen */
 .container, .app-content, .page { width: 100%; }
+/* ======= ElevenLabs voice panel embedded in chat bar ======= */
+.voice-panel {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  bottom: 82px; /* sits just above input bar */
+  width: min(980px, calc(100vw - 16px));
+  max-height: 55dvh;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 8px;
+  z-index: 48; /* above input bar (45) and below sidebar (50) */
+  overflow: hidden;
+
+  /* start hidden (collapsed) */
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: bottom center;
+  transition: opacity .16s ease, transform .16s ease;
+  transform: translateX(-50%) translateY(12px) scale(.98);
+}
+.voice-panel.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(8px) scale(1);
+}
+
+/* Tighter on phones */
+@media (max-width: 640px) {
+  .voice-panel {
+    bottom: 70px;
+    width: calc(100vw - 12px);
+    border-radius: 14px;
+  }
+}
+
+/* Make the custom element flex to container */
+elevenlabs-convai {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
