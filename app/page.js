@@ -8,19 +8,10 @@ export default function Home() {
   return (
     <main className="home-landing">
       <section className="landing-hero">
-        <Image
-          src="/logo.png"
-          alt="HelpHub247"
-          width={132}
-          height={132}
-          priority
-        />
+        <Image src="/logo.png" alt="HelpHub247" width={136} height={136} priority />
         <h1 className="hero-title">HelpHub 24/7</h1>
         <p className="hero-tag">Instant help. Voice + chat, always on.</p>
-
-        <Link href="/chat" className="cta-primary">
-          Chat now
-        </Link>
+        <Link href="/chat" className="cta-primary">Chat now</Link>
       </section>
     </main>
   );
