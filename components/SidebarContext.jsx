@@ -1,34 +1,36 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
-/** Safe default so we never crash during prerender */
-const SidebarContext = createContext({
-  open: false,
-  setOpen: () => {},
-});
+const SidebarCtx = createContext(null);
 
 export function SidebarProvider({ children }) {
   const [open, setOpen] = useState(false);
+  const toggle = useCallback(() => setOpen(v => !v), []);
+  const close = useCallback(() => setOpen(false), []);
 
-  // lock body scroll when open
+  // Reflect state on <html> so CSS can animate hamburger + sidebar together.
   useEffect(() => {
-    if (open) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => (document.body.style.overflow = prev);
-    }
+    const el = document.documentElement;
+    if (open) el.setAttribute("data-sidebar", "open");
+    else el.removeAttribute("data-sidebar");
   }, [open]);
 
+  // Close on ESC
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
-    <SidebarContext.Provider value={{ open, setOpen }}>
+    <SidebarCtx.Provider value={{ open, setOpen, toggle, close }}>
       {children}
-    </SidebarContext.Provider>
+    </SidebarCtx.Provider>
   );
 }
 
 export function useSidebar() {
-  // Do NOT throw if provider missing — just return the safe default.
-  // (We also log once in dev to help catch accidental usage.)
-  const ctx = useContext(SidebarContext);
-  return ctx || { open: false, setOpen: () => {} };
+  const ctx = useContext(SidebarCtx);
+  if (!ctx) throw new Error("useSidebar must be used within SidebarProvider");
+  return ctx;
 }
