@@ -314,3 +314,63 @@ html[data-theme="dark"] {
    Utility: hide Convai widget if you ever need to (optional)
    ===================================================================== */
 /* elevenlabs-convai { display:none; } */
+/* =========================
+   MOBILE FIT & OVERRIDES
+   ========================= */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+/* Make all images scale on small screens */
+img { max-width: 100%; height: auto; }
+
+/* Header spacing tighter on phones */
+@media (max-width: 640px) {
+  .header-inner { padding: 8px 10px; }
+  .logo-link img { height: 42px; }            /* smaller logo on phones */
+}
+
+/* Sidebar: use viewport width so it never overflows */
+.sidebar {
+  width: min(86vw, 320px);
+}
+@media (max-width: 640px) {
+  .sidebar { padding: 76px 12px 14px; }
+}
+
+/* Chat area: ensure no horizontal scroll and full height */
+.chat-wrap {
+  grid-template-rows: 1fr auto;
+  min-height: calc(100dvh - 80px);
+  overflow: hidden;
+}
+.chat-list {
+  padding: 8px 0 110px;                       /* room for input bar */
+}
+
+/* Bubbles: slightly narrower and softer on phones */
+@media (max-width: 640px) {
+  .bubble {
+    max-width: 94vw;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+}
+
+/* Input bar: use vw so it always fits, reduce heights */
+.chat-inputbar {
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(960px, calc(100vw - 16px));      /* <-- key change */
+  bottom: 12px;
+  grid-template-columns: auto auto 1fr auto auto;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 18px;
+}
+@media (max-width: 640px) {
+  .icon-btn { width: 38px; height: 38px; font-size: 18px; }
+  .chat-input { height: 38px; font-size: 16px; }
+  .send-btn { height: 38px; width: 46px; font-size: 18px; }
+}
+
+/* Prevent any element from forcing wider than screen */
+.container, .app-content, .page { width: 100%; }
