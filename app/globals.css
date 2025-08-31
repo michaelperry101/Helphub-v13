@@ -550,3 +550,76 @@ div[aria-label="ElevenLabs Conversational AI"] {
   padding: 12px 14px;
   max-width: 85%;
 }
+/* === One-page home layout === */
+.home {
+  min-height: 100dvh;              /* full viewport, safe on mobile */
+  display: grid;
+  grid-template-rows: 1fr auto;    /* hero (fills) + bar (bottom) */
+  background: #ffffff;
+}
+
+/* Centered hero */
+.hero {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px 16px 96px;         /* leave room above bottom bar */
+}
+
+.hero-title {
+  margin: 14px 0 6px;
+  font-size: clamp(24px, 3.6vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;                  /* slate-900 */
+}
+
+.hero-tag {
+  margin: 0;
+  color: #475569;                  /* slate-600 */
+  font-size: clamp(14px, 2.6vw, 18px);
+}
+
+/* Inline ElevenLabs “chat bar” */
+.inline-voicebar {
+  position: sticky;                /* stays at bottom of page */
+  bottom: 0;
+  width: 100%;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1px solid #e9eef3;
+  z-index: 40;
+}
+
+/* Make the element look like a chat input bar */
+.inline-voicebar elevenlabs-convai {
+  display: block;
+  width: 100%;
+  min-height: 64px;                /* bar height */
+  max-height: 320px;               /* prevent takeover */
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+
+/* Mobile tune */
+@media (max-width: 640px) {
+  .inline-voicebar { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
+  .inline-voicebar elevenlabs-convai { min-height: 56px; border-radius: 14px; }
+}
+
+/* — Hide ElevenLabs' floating “Need help?” launcher completely — */
+/* These selectors are intentionally aggressive; keep them. */
+#elevenlabs-convai-root,
+elevenlabs-convai-launcher,
+div[id*="elevenlabs"][class*="launcher"],
+div[class*="elevenlabs"][class*="launcher"],
+a[href*="elevenlabs"][class*="launcher"],
+div[style*="elevenlabs"][style*="position: fixed"],
+div[aria-label="ElevenLabs Conversational AI"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
