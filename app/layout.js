@@ -2,7 +2,6 @@
 import "./globals.css";
 import Script from "next/script";
 
-// If your project has these, keep them. If not, remove the imports & JSX usage.
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/SidebarContext";
 import Header from "@/components/Header";
@@ -17,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Prevent theme flash if you're using themes */}
+        {/* prevent theme flash */}
         <Script id="set-theme" strategy="beforeInteractive">
           {`
             try {
@@ -27,15 +26,13 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        {/* ElevenLabs Convai widget loader (runs only on the client) */}
+        {/* ElevenLabs Convai loader (global) */}
         <Script
           src="https://unpkg.com/@elevenlabs/convai-widget-embed"
           strategy="afterInteractive"
         />
       </head>
-
       <body>
-        {/* If you don’t have these providers/components, remove them */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <SidebarProvider>
             <Header />
