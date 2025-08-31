@@ -1,37 +1,61 @@
 // app/layout.js
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { SidebarProvider } from "@/components/SidebarContext";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import Script from "next/script";
 
 export const metadata = {
   title: "HelpHub247",
-  description: "24/7 UK AI helpline — Carys",
+  description: "Instant help. Voice + chat, always on.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        {/* Prevent theme flash */}
-        <Script id="set-theme" strategy="beforeInteractive">
-          {`try{var t=localStorage.getItem('hh_theme')||'light';document.documentElement.dataset.theme=t;}catch(e){}`}
-        </Script>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
+        {/* Prevent theme flash; simple light mode default */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const t = localStorage.getItem('hh_theme') || 'light';
+                document.documentElement.dataset.theme = t;
+              } catch(e){}
+            `,
+          }}
+        />
       </head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <SidebarProvider>
-            <Header />
-            <Sidebar />
-            <main className="app-content">{children}</main>
-          </SidebarProvider>
-        </ThemeProvider>
+        <Header />
+        <Sidebar />
+        <main className="page-container">{children}</main>
+
+        {/* Small global script to toggle the sidebar and close on route/link click */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                const doc = document;
+                doc.addEventListener('click', (e)=>{
+                  const t = e.target;
+                  if(t && t.closest && t.closest('#hamburger')){
+                    e.preventDefault();
+                    doc.body.classList.toggle('nav-open');
+                  }
+                  if(t && t.closest && t.closest('.sidebar a')){
+                    doc.body.classList.remove('nav-open');
+                  }
+                  if(t && t.classList && t.classList.contains('overlay')){
+                    doc.body.classList.remove('nav-open');
+                  }
+                });
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   );
