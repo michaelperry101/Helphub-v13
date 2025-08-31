@@ -1,17 +1,9 @@
-// components/ThemeProvider.jsx
 "use client";
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+// Minimal ThemeProvider shim
+// We already set the theme in app/layout.js via a <Script>.
+// This just returns children so your layout still works.
 
-export function ThemeProvider({ children, ...props }) {
-  return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem
-      {...props}
-    >
-      {children}
-    </NextThemesProvider>
-  );
+export function ThemeProvider({ children }) {
+  return children;
 }
