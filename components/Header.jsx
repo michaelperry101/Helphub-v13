@@ -1,31 +1,28 @@
 "use client";
 import Link from "next/link";
 import { useSidebar } from "@/components/SidebarContext";
-import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const { open, setOpen } = useSidebar();
-  const pathname = usePathname();
+  const { open, toggle } = useSidebar();
 
   return (
     <header className="site-header">
-      {/* Sleek animated hamburger */}
+      {/* Animated hamburger tied to sidebar state */}
       <button
         aria-label={open ? "Close menu" : "Open menu"}
-        className={`hamburger ${open ? "is-active" : ""}`}
-        onClick={() => setOpen(!open)}
+        className="hamburger"
+        onClick={toggle}
       >
         <span />
         <span />
         <span />
       </button>
 
-      {/* Centered logo (always routes home) */}
+      {/* Centered logo – ensure /public/logo.png or logo.svg exists */}
       <Link href="/" className="logo-link" prefetch={false}>
         <img src="/logo.png" alt="HelpHub247" />
       </Link>
 
-      {/* Right spacer to keep logo centered */}
       <div className="header-right" />
     </header>
   );
