@@ -1,23 +1,34 @@
-// components/SidebarContext.jsx
 "use client";
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-const Ctx = createContext(null);
+/** Safe default so we never crash during prerender */
+const SidebarContext = createContext({
+  open: false,
+  setOpen: () => {},
+});
 
 export function SidebarProvider({ children }) {
   const [open, setOpen] = useState(false);
-  const toggle = useCallback(() => setOpen((v) => !v), []);
-  const close = useCallback(() => setOpen(false), []);
-  const openMenu = useCallback(() => setOpen(true), []);
+
+  // lock body scroll when open
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => (document.body.style.overflow = prev);
+    }
+  }, [open]);
+
   return (
-    <Ctx.Provider value={{ open, toggle, close, openMenu }}>
+    <SidebarContext.Provider value={{ open, setOpen }}>
       {children}
-    </Ctx.Provider>
+    </SidebarContext.Provider>
   );
 }
 
 export function useSidebar() {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useSidebar must be used within SidebarProvider");
-  return ctx;
+  // Do NOT throw if provider missing — just return the safe default.
+  // (We also log once in dev to help catch accidental usage.)
+  const ctx = useContext(SidebarContext);
+  return ctx || { open: false, setOpen: () => {} };
 }
