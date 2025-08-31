@@ -1,54 +1,33 @@
 // components/Sidebar.jsx
 "use client";
-import Link from "next/link";
-import { useSidebar } from "@/components/SidebarContext";
-import { usePathname } from "next/navigation";
 
-const items = [
-  { href: "/", label: "Home", icon: "🏠" },
-  { href: "/chat", label: "Chat", icon: "💬" },
-  { href: "/reviews", label: "Reviews", icon: "⭐" },
-  { href: "/about", label: "About Carys", icon: "👤" },
-  { href: "/terms", label: "Terms", icon: "📄" },
-  { href: "/privacy", label: "Privacy", icon: "🛡️" },
-  { href: "/billing", label: "Billing", icon: "💳" },
-  { href: "/subscribe", label: "Subscribe", icon: "➕" },
-  { href: "/settings", label: "Settings", icon: "⚙️" },
-];
+import Link from "next/link";
+import { useSidebar } from "./SidebarContext";
 
 export default function Sidebar() {
-  const { open, close } = useSidebar();
-  const pathname = usePathname();
+  const { isOpen, toggle } = useSidebar();
 
   return (
-    <>
-      {/* backdrop */}
-      <div
-        className={`backdrop ${open ? "show" : ""}`}
-        onClick={close}
-        aria-hidden={!open}
-      />
-      <aside className={`sidebar ${open ? "open" : ""}`} role="dialog" aria-modal="true">
-        <nav className="menu">
-          {items.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`menu-pill ${active ? "active" : ""}`}
-                onClick={close}
-              >
-                <span className="pill-ico" aria-hidden>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="sidebar-footer">© {new Date().getFullYear()} HelpHub247</div>
-      </aside>
-    </>
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+      <nav className="menu">
+        <Link href="/" className="menu-btn" onClick={toggle}>
+          🏠 Home
+        </Link>
+        {/* New Chat button with timestamp */}
+        <a
+          href={`/chat?ts=${Date.now()}`}
+          className="menu-btn"
+          onClick={toggle}
+        >
+          ＋ New Chat
+        </a>
+        <Link href="/about" className="menu-btn" onClick={toggle}>
+          ℹ️ About
+        </Link>
+        <Link href="/settings" className="menu-btn" onClick={toggle}>
+          ⚙️ Settings
+        </Link>
+      </nav>
+    </aside>
   );
 }
