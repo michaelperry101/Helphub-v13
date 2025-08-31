@@ -442,3 +442,42 @@ elevenlabs-convai {
   .voice-only-wrap { padding: 8px; }
   elevenlabs-convai { min-height: 70dvh; }
 }
+/* Wrap keeps messages + bar stacked */
+.chat-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+/* Message list above */
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ElevenLabs bar at bottom */
+.chat-inputbar.eleven-chat {
+  border-top: 1px solid var(--border, #ddd);
+  padding: 8px;
+  background: var(--surface, #fff);
+}
+
+/* Force ElevenLabs to look like an input bar */
+.chat-inputbar.eleven-chat elevenlabs-convai {
+  display: block;
+  width: 100%;
+  min-height: 64px;   /* height of an input bar */
+  max-height: 300px;  /* stops it from overtaking screen */
+  border-radius: 12px;
+  border: 1px solid var(--border, #ccc);
+  overflow: hidden;
+}
+
+/* Mobile tweaks */
+@media (max-width: 640px) {
+  .chat-inputbar.eleven-chat elevenlabs-convai {
+    min-height: 56px;
+    border-radius: 10px;
+  }
+}
