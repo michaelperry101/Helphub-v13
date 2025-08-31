@@ -2,32 +2,36 @@
 "use client";
 
 import Link from "next/link";
-import { useSidebar } from "./SidebarContext";
 
 export default function Sidebar() {
-  const { isOpen, toggle } = useSidebar();
-
   return (
-    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-      <nav className="menu">
-        <Link href="/" className="menu-btn" onClick={toggle}>
-          🏠 Home
-        </Link>
-        {/* New Chat button with timestamp */}
-        <a
-          href={`/chat?ts=${Date.now()}`}
-          className="menu-btn"
-          onClick={toggle}
-        >
-          ＋ New Chat
-        </a>
-        <Link href="/about" className="menu-btn" onClick={toggle}>
-          ℹ️ About
-        </Link>
-        <Link href="/settings" className="menu-btn" onClick={toggle}>
-          ⚙️ Settings
-        </Link>
-      </nav>
-    </aside>
+    <>
+      <aside className="sidebar" role="navigation" aria-label="Main">
+        <nav>
+          <ul>
+            <li><Link href="/">Home</Link></li>
+            <li><Link href="/chat">Chat</Link></li>
+            <li><Link href="/about">About</Link></li>
+            <li><a href="mailto:hello@helphub247.com">Contact</a></li>
+          </ul>
+        </nav>
+        <div className="sidebar-footer">
+          <button
+            className="theme-toggle"
+            onClick={() => {
+              const r = document.documentElement;
+              const next = r.dataset.theme === "dark" ? "light" : "dark";
+              r.dataset.theme = next;
+              try { localStorage.setItem("hh_theme", next); } catch (e) {}
+            }}
+          >
+            Toggle theme
+          </button>
+        </div>
+      </aside>
+
+      {/* Clickable backdrop to close the drawer */}
+      <div className="overlay" aria-hidden="true" />
+    </>
   );
 }
