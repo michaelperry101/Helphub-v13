@@ -1,25 +1,32 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-import { useSidebar } from "./SidebarContext";
+import { useSidebar } from "@/components/SidebarContext";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const { setOpen } = useSidebar();
+  const { open, setOpen } = useSidebar();
+  const pathname = usePathname();
+
   return (
     <header className="site-header">
+      {/* Sleek animated hamburger */}
       <button
-        className="hamburger"
-        aria-label="Open menu"
-        onClick={() => setOpen(true)}
+        aria-label={open ? "Close menu" : "Open menu"}
+        className={`hamburger ${open ? "is-active" : ""}`}
+        onClick={() => setOpen(!open)}
       >
         <span />
         <span />
         <span />
       </button>
 
-      <Link href="/" className="logo-link" aria-label="Go home">
-        <Image src="/logo.png" alt="HelpHub247" width={120} height={36} priority />
+      {/* Centered logo (always routes home) */}
+      <Link href="/" className="logo-link" prefetch={false}>
+        <img src="/logo.svg" alt="HelpHub247" />
       </Link>
+
+      {/* Right spacer to keep logo centered */}
+      <div className="header-right" />
     </header>
   );
 }
