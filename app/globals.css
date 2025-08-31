@@ -623,3 +623,101 @@ div[aria-label="ElevenLabs Conversational AI"] {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+/* ---------- Landing page ---------- */
+.home-landing{
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background:#fff;
+}
+.landing-hero{
+  text-align:center;
+  display:grid;
+  gap:12px;
+}
+.hero-title{
+  margin:6px 0 2px;
+  font-size:clamp(24px,3.4vw,36px);
+  font-weight:800;
+  letter-spacing:-0.02em;
+  color:#0f172a;
+}
+.hero-tag{
+  margin:0 0 14px;
+  color:#475569;
+  font-size:clamp(14px,2.6vw,18px);
+}
+.cta-primary{
+  display:inline-block;
+  padding:12px 18px;
+  border-radius:999px;
+  background:#0ea5e9;
+  color:#fff;
+  font-weight:700;
+  text-decoration:none;
+  box-shadow:0 8px 20px rgba(14,165,233,.25);
+  transition:transform .08s ease, box-shadow .2s ease, background .2s ease;
+}
+.cta-primary:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(14,165,233,.28); }
+.cta-primary:active{ transform:translateY(0); }
+
+/* ---------- Chat page layout ---------- */
+.chat-screen{
+  min-height:100dvh;
+  display:grid;
+  grid-template-rows:auto 1fr auto; /* header, transcript, voicebar */
+  background:#fff;
+}
+.chat-header{
+  position:sticky; top:0; z-index:10;
+  display:flex; gap:8px; align-items:last baseline;
+  padding:12px 16px;
+  background:#fff;
+  border-bottom:1px solid #eef2f7;
+}
+.chat-header h1{
+  margin:0; font-size:clamp(18px,2.8vw,22px); font-weight:800; color:#0f172a;
+}
+.muted{ color:#64748b; font-size:14px; }
+
+/* transcript area (blank for voice-first, but ready for future messages) */
+.chat-transcript{
+  padding:16px;
+  overflow:auto;
+}
+
+/* Inline ElevenLabs bar at the bottom */
+.voicebar{
+  position:sticky; bottom:0; z-index:20;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:#fff;
+  border-top:1px solid #e9eef3;
+}
+.voicebar elevenlabs-convai{
+  display:block;
+  width:100%;
+  min-height:64px;            /* compact height to feel like a bar */
+  max-height:360px;           /* widget may expand when active */
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(2,6,23,.08);
+}
+@media (max-width:640px){
+  .voicebar{ padding:8px 8px calc(8px + env(safe-area-inset-bottom)); }
+  .voicebar elevenlabs-convai{ min-height:56px; border-radius:14px; }
+}
+
+/* Hide ElevenLabs floating launcher (“Need help?” bubble) everywhere */
+#elevenlabs-convai-root,
+elevenlabs-convai-launcher,
+div[id*="elevenlabs"][class*="launcher"],
+div[class*="elevenlabs"][class*="launcher"],
+a[href*="elevenlabs"][class*="launcher"],
+div[aria-label="ElevenLabs Conversational AI"]{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
