@@ -22,7 +22,7 @@ export default function Header() {
 
       {/* Centered logo (always routes home) */}
       <Link href="/" className="logo-link" prefetch={false}>
-        <img src="/logo.svg" alt="HelpHub247" />
+        <img src="/logo.svg" alt="logo.png" />
       </Link>
 
       {/* Right spacer to keep logo centered */}
