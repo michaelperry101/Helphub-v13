@@ -418,3 +418,27 @@ elevenlabs-convai {
   width: 100%;
   height: 100%;
 }
+/* ElevenLabs voice-only chat page */
+.voice-only-wrap {
+  position: relative;
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 12px;
+}
+
+elevenlabs-convai {
+  display: block;
+  width: 100%;
+  min-height: min(70dvh, 720px);
+  border-radius: 16px;
+  overflow: hidden;
+  /* Optional frame styling (comment if you want it bare) */
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e6e6e6);
+  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+}
+
+@media (max-width: 640px) {
+  .voice-only-wrap { padding: 8px; }
+  elevenlabs-convai { min-height: 70dvh; }
+}
