@@ -2,30 +2,26 @@
 "use client";
 
 import Script from "next/script";
-import Link from "next/link";
+
+export const metadata = { title: "Chat — Carys (Voice)" };
 
 export default function ChatPage() {
   return (
-    <div className="chat-page">
-      <header className="chat-header">
-        <Link href="/" className="brand">
-          <img src="/logo.png" alt="HelpHub247" height={28} />
-        </Link>
-        <h1 className="visually-hidden">Chat with Carys</h1>
-      </header>
+    <section className="chat-screen">
+      {/* The chat area stays clean; widget sits inside the page content */}
+      <div className="chat-stage" />
 
-      <main className="chat-main" />
-
-      {/* ElevenLabs widget — your NEW agent id */}
+      {/* ElevenLabs widget (your agent) */}
       <elevenlabs-convai
-        agent-id="agent_3001k3vq n59yfb6tmb5mjjwd17jc"
+        agent-id="agent_3001k3vqn59yfb6tmb5mjwwd17jc"
       ></elevenlabs-convai>
 
+      {/* Widget script – loaded only on this route */}
       <Script
         src="https://unpkg.com/@elevenlabs/convai-widget-embed"
         async
         type="text/javascript"
       />
-    </div>
+    </section>
   );
 }
